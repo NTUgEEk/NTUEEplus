@@ -1,0 +1,4 @@
+*.tgz
+*.zip
+node_modules
+*.swp
