@@ -1,17 +1,14 @@
-'use strict'
-
 const express = require('express');
 const path = require('path');
 const logger = require('morgan');
 const nunjucks = require('nunjucks');
 const bodyParser = require('body-parser');
+const api = require('./api');
+
 const app = express();
 
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
-
-const Router = require('express').Router;
-const router = new Router();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'nunjucks');
@@ -26,13 +23,7 @@ app.use(bodyParser.json());
 app.use(logger('dev'));
 app.use('/public', express.static(path.join(__dirname, '..', 'public')));
 
-router.use((err, req, res) => {
-  // console.log("error occurs: " + err.message);
-  res.status(err.status || 500);
-  res.send(err);
-});
-
-app.use('/api', router);
+app.use('/api', api);
 app.use('*', (req, res) => {
   res.render('index');
   // res.sendFile(path.join(__dirname, '..', 'index.html'));
