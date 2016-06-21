@@ -123,7 +123,7 @@ app.post('/signIn', (req, res) => {
         if (res2 && !err2) {
           res.cookie('username', username);
           console.log('session', req.session);
-          req.session.username = username;
+          req.session.username = username; // ???
           res.send('login success!');
         } else {
           console.log('Incorrect password.');
