@@ -7,9 +7,12 @@ const config = require('./webpack.config.dev');
 const bodyParser = require('body-parser');
 const nunjucks = require('nunjucks');
 
-const passport = require('passport');
+const logger = require('morgan');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
 
 const User = require('./server/models/user');
 
@@ -27,9 +30,20 @@ function getBcrypt(password) {
   return hash;
 }
 
+app.use(cookieParser());
+
+app.use(session({
+  secret: 'WebProgrammingFinalHarveyAndJohn',
+  resave: false,
+  saveUninitialized: true,
+  store: new RedisStore(),
+  cookie: { secure: true },
+}));
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'nunjucks');
 
+app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -47,20 +61,31 @@ app.use(require('webpack-hot-middleware')(compiler));
 
 mongoose.connect(require('./server/config/database').database);
 
-require('./server/config/passport')(passport);
-
-app.use(require('express-session')({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: false,
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-
 app.use('/public', express.static('public'));
 app.use('/api', proxy(`http://localhost:${API_PORT}/api`));
 
-app.post('/register', (req, res, next) => {
+const auth = (req, res, next) => {
+  const username = req.session.cookie.username;
+  console.log('session', req.session);
+  console.log('username', username);
+  if (username) {
+    res.sendStatus(401);
+  } else {
+    User.findOne({ name: username }, (err, user) => {
+      if (err || !user) { res.sendStatus(401); }
+      next();
+      // user.comparePassword(password, user.password, (err2, res2) => {
+      //   if (res2 && !err2) {
+      //     next();
+      //   } else {
+      //     res.sendStatus(401);
+      //   }
+      // });
+    });
+  }
+};
+
+app.post('/register', (req, res) => {
   console.log('body', req.body);
   if (!req.body.username || !req.body.password) {
     res.json({ success: false, msg: 'Please pass name and password.' });
@@ -77,43 +102,65 @@ app.post('/register', (req, res, next) => {
       if (err) {
         res.json({ success: false, msg: 'Username already exists.' });
       }
-      console.log('err', err);
-      console.log('user', req.user);
-      req.logIn(newUser, (err2) => {
-        if (err2) {
-          console.log('err2', err2);
-          return next(err);
+      req.session.username = newUser.name;
+      res.send('Succeed.');
+    });
+  }
+});
+
+// Login endpoint
+app.post('/signIn', (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  console.log('body', req.body);
+  if (!username || !password) {
+    res.send('login failed');
+  } else {
+    User.findOne({ name: username }, (err, user) => {
+      console.log('user', user);
+      if (err) { res.send(err); }
+      if (!user) { res.send('Incorrect username.'); }
+      user.comparePassword(password, user.password, (err2, res2) => {
+        console.log('res', res2);
+        console.log('err2', err2);
+        if (res2 && !err2) {
+          console.log('session', req.session);
+          req.session.cookie.username = username;
+          console.log('session', req.session);
+          req.session.save((err4) => {
+            console.log('save err: ', err4);
+          });
+          res.send('login success!');
+        } else {
+          console.log('Incorrect password.');
         }
-        console.log('user', req.user);
-        return res.redirect('/lobby');
       });
     });
   }
 });
 
-app.post('/signIn',
-  passport.authenticate('local', {
-    successRedirect: '/lobby',
-    failureRedirect: '/login',
-  }));
+// Logout endpoint
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.send('logout success!');
+});
 
-app.get('/logOut',
-  (req, res) => {
-    console.log(req.user);
-    req.logout();
-    console.log(req.user);
-    res.redirect('/');
-  });
-
-app.get('/profile',
-  require('connect-ensure-login').ensureLoggedIn(),
-  (req, res) => {
-    console.log('req.session', req.session);
-    res.render('profile', { user: req.user });
-  });
+// Get content endpoint
+app.get('/content', auth, (req, res) => {
+  res.send("You can only see this after you've logged in.");
+});
 
 app.get('/Logout', (req, res) => {
   res.render('Logout');
+});
+
+app.get('/dropDatabase', (req, res) => {
+  console.log('get drop...');
+  mongoose.connection.db.dropDatabase('User', (err, result) => {
+    console.log('err', err);
+    console.log('result', result);
+    res.send(result);
+  });
 });
 
 app.get('*', (req, res) => {

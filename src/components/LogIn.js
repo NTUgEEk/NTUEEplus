@@ -23,6 +23,7 @@ class LogIn extends Component {
     this.request = this.request.bind(this);
     this.check = this.check.bind(this);
     this.logOut = this.logOut.bind(this);
+    this.dropDatabase = this.dropDatabase.bind(this);
     // this.succeed = this.succeed.bind(this);
   }
 
@@ -46,10 +47,10 @@ class LogIn extends Component {
     if (signIn) url = '/signIn';
 
     fetch(url, {
-      credentials: 'include',
+      credentials: 'same-origin',
       method: 'post',
       headers: {
-        Accept: 'basic',
+        Accept: 'basic, application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -60,13 +61,16 @@ class LogIn extends Component {
       .then((res) => {
         console.log('status: ', res.status);
         console.log('res', res);
+        console.log(document.cookie);
       })
       .catch((err) => {
         console.log(err);
       });
   }
   check() {
-    fetch('/profile')
+    fetch('/content', {
+      credentials: 'include',
+    })
       .then((res) => {
         console.log('status: ', res.status);
         console.log('res', res);
@@ -77,6 +81,17 @@ class LogIn extends Component {
   }
   logOut() {
     fetch('/logOut')
+      .then((res) => {
+        console.log('status: ', res.status);
+        console.log('res', res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  dropDatabase() {
+    console.log(1);
+    fetch('/dropDatabase')
       .then((res) => {
         console.log('status: ', res.status);
         console.log('res', res);
@@ -122,8 +137,9 @@ class LogIn extends Component {
             <div className="form__submit-btn-wrapper">
               <button className="form__submit-btn" onClick={this.signIn}>SignIn</button>
               <button className="form__submit-btn" onClick={this.register}>Register</button>
-              <button className="form__submit-btn" onClick={this.check}>Check</button>
+              <button className="form__submit-btn" onClick={this.check}>Content</button>
               <button className="form__submit-btn" onClick={this.logOut}>LogOut</button>
+              <button className="form__submit-btn" onClick={this.dropDatabase}>DropDatabase</button>
             </div>
           </div>
         </div>
