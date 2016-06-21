@@ -12,7 +12,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
-const RedisStore = require('connect-redis')(session);
+const MongoStore = require('connect-mongo')(session);
 
 const User = require('./server/models/user');
 
@@ -30,13 +30,18 @@ function getBcrypt(password) {
   return hash;
 }
 
+mongoose.connect(require('./server/config/database').database);
+
 app.use(cookieParser());
 
 app.use(session({
   secret: 'WebProgrammingFinalHarveyAndJohn',
   resave: false,
   saveUninitialized: true,
-  store: new RedisStore(),
+  store: new MongoStore({
+    mongooseConnection: mongoose.connection,
+    ttl: 14 * 24 * 3600,
+  }),
   cookie: { secure: true },
 }));
 
@@ -59,28 +64,18 @@ app.use(require('webpack-dev-middleware')(compiler, {
 
 app.use(require('webpack-hot-middleware')(compiler));
 
-mongoose.connect(require('./server/config/database').database);
-
 app.use('/public', express.static('public'));
 app.use('/api', proxy(`http://localhost:${API_PORT}/api`));
 
 const auth = (req, res, next) => {
-  const username = req.session.cookie.username;
-  console.log('session', req.session);
+  const username = req.cookies.username;
   console.log('username', username);
-  if (username) {
+  if (!username) {
     res.sendStatus(401);
   } else {
     User.findOne({ name: username }, (err, user) => {
       if (err || !user) { res.sendStatus(401); }
       next();
-      // user.comparePassword(password, user.password, (err2, res2) => {
-      //   if (res2 && !err2) {
-      //     next();
-      //   } else {
-      //     res.sendStatus(401);
-      //   }
-      // });
     });
   }
 };
@@ -102,7 +97,7 @@ app.post('/register', (req, res) => {
       if (err) {
         res.json({ success: false, msg: 'Username already exists.' });
       }
-      req.session.username = newUser.name;
+      res.cookie('username', newUser.name);
       res.send('Succeed.');
     });
   }
@@ -112,10 +107,12 @@ app.post('/register', (req, res) => {
 app.post('/signIn', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
-  console.log('body', req.body);
+  console.log('cookies', req.cookies);
+  console.log('cookie', req.cookie);
   if (!username || !password) {
     res.send('login failed');
   } else {
+    console.log(1);
     User.findOne({ name: username }, (err, user) => {
       console.log('user', user);
       if (err) { res.send(err); }
@@ -124,12 +121,9 @@ app.post('/signIn', (req, res) => {
         console.log('res', res2);
         console.log('err2', err2);
         if (res2 && !err2) {
+          res.cookie('username', username);
           console.log('session', req.session);
-          req.session.cookie.username = username;
-          console.log('session', req.session);
-          req.session.save((err4) => {
-            console.log('save err: ', err4);
-          });
+          req.session.username = username;
           res.send('login success!');
         } else {
           console.log('Incorrect password.');
