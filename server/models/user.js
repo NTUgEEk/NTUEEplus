@@ -1,26 +1,34 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 
-// Thanks to http://blog.matoski.com/articles/jwt-express-node-mongoose/
+exports.createUser = (con, data, next) => {
+  console.log('data', data);
+  con.query('INSERT INTO USER SET ?', data, next);
+};
 
-// set up a mongoose model
-const UserSchema = new Schema({
-  name: {
-    type: String,
-    unique: true,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-});
-
-UserSchema.methods.comparePassword = (passw, passw2, next) => {
-  bcrypt.compare(passw, passw2, (err, res) => {
-    next(err, res);
+exports.checkPassword = (con, email, password, next) => {
+  console.log('email', email);
+  console.log('password', password);
+  con.query('SELECT EMAIL, PASSWORD FROM USER WHERE Email = ?', [email], (err, rows) => {
+    if (err || !rows || rows.length > 1) {
+      next(err, false);
+    } else if (rows.length !== 1) {
+      console.log(`checkPassword: User not found with email: ${email}`);
+      next(null, false);
+    } else {
+      bcrypt.compare(password, rows[0].PASSWORD, next);
+    }
   });
 };
 
-module.exports = mongoose.model('User', UserSchema);
+exports.checkExist = (con, email, next) => {
+  con.query('SELECT Email FROM USER WHERE Email = ? LIMIT 1', [email], (err, rows) => {
+    if (err || !rows || rows.length > 1) {
+      next(err, false);
+    } else if (rows.length !== 1) {
+      console.log(`checkExist: User not found with email: ${email}`);
+      next(null, false);
+    } else {
+      next(null, true);
+    }
+  });
+};

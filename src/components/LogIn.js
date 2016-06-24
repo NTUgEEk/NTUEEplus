@@ -40,21 +40,21 @@ class LogIn extends Component {
   }
 
   request(signIn) {
-    const username = ReactDOM.findDOMNode(this.refs.username).value;
+    const email = ReactDOM.findDOMNode(this.refs.email).value;
     const password = ReactDOM.findDOMNode(this.refs.password).value;
     console.log('signIn', signIn);
-    let url = '/register';
-    if (signIn) url = '/signIn';
+    let url = '/api/register';
+    if (signIn) url = '/api/signIn';
 
     fetch(url, {
-      credentials: 'same-origin',
+      credentials: 'include',
       method: 'post',
       headers: {
         Accept: 'basic, application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        username, // username: username
+        email,    // email: email
         password, // password: password
       }),
     })
@@ -68,7 +68,8 @@ class LogIn extends Component {
       });
   }
   check() {
-    fetch('/content', {
+    console.log('check');
+    fetch('/api/content', {
       credentials: 'include',
     })
       .then((res) => {
@@ -80,7 +81,7 @@ class LogIn extends Component {
       });
   }
   logOut() {
-    fetch('/logOut')
+    fetch('/api/logOut')
       .then((res) => {
         console.log('status: ', res.status);
         console.log('res', res);
@@ -90,7 +91,6 @@ class LogIn extends Component {
       });
   }
   dropDatabase() {
-    console.log(1);
     fetch('/dropDatabase')
       .then((res) => {
         console.log('status: ', res.status);
@@ -118,12 +118,12 @@ class LogIn extends Component {
             </div>
             <div className="form__field-wrapper">
               <input
-                ref="username"
+                ref="email"
                 className="form__field-input"
                 type="text"
                 placeholder="frank.underwood"
               />
-              <label className="form__field-label" htmlFor="username">Username</label>
+              <label className="form__field-label" htmlFor="username">Email</label>
             </div>
             <div className="form__field-wrapper">
               <input

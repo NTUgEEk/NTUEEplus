@@ -2,4 +2,4 @@
 
 #### sudo mongod
 #### npm run start
-(hot-module only)
+(no hot-module only)
