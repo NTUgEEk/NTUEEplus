@@ -18,9 +18,12 @@ class LogIn extends Component {
       err: '',
     };
 
-    this.login = this.login.bind(this);
+    this.signIn = this.signIn.bind(this);
     this.register = this.register.bind(this);
     this.request = this.request.bind(this);
+    this.check = this.check.bind(this);
+    this.logOut = this.logOut.bind(this);
+    this.dropDatabase = this.dropDatabase.bind(this);
     // this.succeed = this.succeed.bind(this);
   }
 
@@ -28,7 +31,7 @@ class LogIn extends Component {
     this.forceUpdate();
   }
 
-  login() {
+  signIn() {
     this.request(true);
   }
 
@@ -36,52 +39,67 @@ class LogIn extends Component {
     this.request(false);
   }
 
-  request(login) {
+  request(signIn) {
     const username = ReactDOM.findDOMNode(this.refs.username).value;
     const password = ReactDOM.findDOMNode(this.refs.password).value;
-    const thisArg = this;
+    console.log('signIn', signIn);
+    let url = '/register';
+    if (signIn) url = '/signIn';
 
-    fetch('/api/users', {
+    fetch(url, {
+      credentials: 'same-origin',
       method: 'post',
       headers: {
-        Accept: 'application/json',
+        Accept: 'basic, application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         username, // username: username
         password, // password: password
-        login,
       }),
     })
       .then((res) => {
         console.log('status: ', res.status);
-        return res.json();
-      })
-      .then((json) => {
-        if (login) {
-          if (json === 'Succeed login.') {
-            this.succeed(username);
-          } else {
-            thisArg.setState({ err: json });
-          }
-        } else {
-          if (json === 'Succeed register.') {
-            this.succeed(username);
-          } else {
-            thisArg.setState({ err: json });
-          }
-        }
+        console.log('res', res);
+        console.log(document.cookie);
       })
       .catch((err) => {
         console.log(err);
       });
   }
-
-  // succeed(username) {
-  //   console.log('succeedLogIn: ', username);
-  //   const { router } = this.context;
-  //   router.push(`/${username}`);
-  // }
+  check() {
+    fetch('/content', {
+      credentials: 'include',
+    })
+      .then((res) => {
+        console.log('status: ', res.status);
+        console.log('res', res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  logOut() {
+    fetch('/logOut')
+      .then((res) => {
+        console.log('status: ', res.status);
+        console.log('res', res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  dropDatabase() {
+    console.log(1);
+    fetch('/dropDatabase')
+      .then((res) => {
+        console.log('status: ', res.status);
+        console.log('res', res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   render() {
     return (
@@ -117,8 +135,11 @@ class LogIn extends Component {
               <label className="form__field-label" htmlFor="password">Password</label>
             </div>
             <div className="form__submit-btn-wrapper">
-              <button className="form__submit-btn" onClick={this.login}>LogIn</button>
+              <button className="form__submit-btn" onClick={this.signIn}>SignIn</button>
               <button className="form__submit-btn" onClick={this.register}>Register</button>
+              <button className="form__submit-btn" onClick={this.check}>Content</button>
+              <button className="form__submit-btn" onClick={this.logOut}>LogOut</button>
+              <button className="form__submit-btn" onClick={this.dropDatabase}>DropDatabase</button>
             </div>
           </div>
         </div>
