@@ -1,5 +1,12 @@
 # Web_Programming_Final_Project
 
-#### sudo mongod
-#### npm run start
-(no hot-module only)
+#### hot module
+```bash
+$ npm run start
+```
+
+#### production
+```bash
+$ npm run build
+$ npm run start:prod
+```
