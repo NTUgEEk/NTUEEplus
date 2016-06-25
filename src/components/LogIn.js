@@ -23,7 +23,6 @@ class LogIn extends Component {
     this.request = this.request.bind(this);
     this.check = this.check.bind(this);
     this.logOut = this.logOut.bind(this);
-    this.dropDatabase = this.dropDatabase.bind(this);
     // this.succeed = this.succeed.bind(this);
   }
 
@@ -74,24 +73,17 @@ class LogIn extends Component {
     })
       .then((res) => {
         console.log('status: ', res.status);
-        console.log('res', res);
+        console.log('res.body', res.body);
+        console.log('res.json', res.json);
       })
       .catch((err) => {
         console.log(err);
       });
   }
   logOut() {
-    fetch('/api/logOut')
-      .then((res) => {
-        console.log('status: ', res.status);
-        console.log('res', res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-  dropDatabase() {
-    fetch('/dropDatabase')
+    fetch('/api/logOut', {
+      credentials: 'include',
+    })
       .then((res) => {
         console.log('status: ', res.status);
         console.log('res', res);
@@ -139,7 +131,6 @@ class LogIn extends Component {
               <button className="form__submit-btn" onClick={this.register}>Register</button>
               <button className="form__submit-btn" onClick={this.check}>Content</button>
               <button className="form__submit-btn" onClick={this.logOut}>LogOut</button>
-              <button className="form__submit-btn" onClick={this.dropDatabase}>DropDatabase</button>
             </div>
           </div>
         </div>

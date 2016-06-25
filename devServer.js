@@ -21,6 +21,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'nunjucks');
 
 app.use(logger('dev'));
+
+app.use('/public', express.static('public'));
+app.use('/api', proxy(`http://localhost:${API_PORT}/api`));
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -35,9 +39,6 @@ app.use(require('webpack-dev-middleware')(compiler, {
 }));
 
 app.use(require('webpack-hot-middleware')(compiler));
-
-app.use('/public', express.static('public'));
-app.use('/api', proxy(`http://localhost:${API_PORT}/api`));
 
 app.get('*', (req, res) => {
   res.render('index');
