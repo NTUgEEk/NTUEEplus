@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import 'babel-polyfill';
 
-export default class Login extends Component {
+export default class UserInfo extends Component {
   render() {
     return (
       <div>
-        <div>Login</div>
+        <div>UserInfo</div>
       </div>
     )
   }
