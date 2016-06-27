@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import 'babel-polyfill';
 
-import Login from './Login';
-import Header from './Header';
-
 export default class Routing extends Component {
   constructor(context) {
     super(context);
@@ -46,6 +43,7 @@ export default class Routing extends Component {
   render() {
     return (
       <div>
+        {/*<Header user={this.state.user} />*/}
         {this.Children()}
       </div>
     )
