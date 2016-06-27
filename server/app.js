@@ -9,7 +9,6 @@ const cookieParser = require('cookie-parser');
 const app = express();
 
 const server = require('http').createServer(app);
-const io = require('socket.io')(server);
 
 app.use(cookieParser());
 
@@ -33,15 +32,6 @@ app.get('Logout', (req, res) => {
 
 app.use('*', (req, res) => {
   res.render('index');
-});
-
-io.on('connection', (socket) => {
-  console.log('connected and emitting...'); // eslint-disable-line no-console
-  socket.emit('news', { hello: 'world' });
-
-  socket.on('disconnect', () => {
-    console.log('disconnected...');
-  });
 });
 
 if (app.get('env') === 'development') {
