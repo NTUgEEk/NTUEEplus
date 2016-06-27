@@ -11,6 +11,9 @@ User:
 		PERSONAL_WEBSITE: String, (link)
 		FACEBOOK: String, (link)
 		LINKIN: String, (link)
+		MS: String,
+		PHD: String,
+		SEARCHING_AREA: String,
 	},
 
 
