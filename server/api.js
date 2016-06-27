@@ -85,6 +85,12 @@ router.get('/content', auth, (req, res) => {
   res.send("You can only see this after you've logged in.");
 });
 
+router.post('/formSignIn', (req, res) => {
+  console.log('req: ', req);
+  console.log('password:', req.body.inputPassword);
+  res.send('Succeed');
+});
+
 router.use((err, req, res) => {
   res.status(err.status || 500);
   res.send(err);
