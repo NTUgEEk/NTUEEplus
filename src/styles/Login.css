@@ -12,6 +12,13 @@ body {
 .form-signin-heading {
   text-align: center;
 }
-.btn {
+.form-suffix {
+  height: 30px;
+  line-height: 30px;
+  float: right;
+  margin-bottom: 15px;
+  padding-right: 20px;
+}
+.btn-login {
   background-color: #B8D4FE;
 }

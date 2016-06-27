@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import 'babel-polyfill';
+import { Link } from 'react-router';
 
 import '../styles/Login.css'
 
@@ -25,7 +26,10 @@ export default class Login extends Component {
             <label for="inputPassword">密碼</label>
             <input type="password" id="inputPassword" className="form-control" placeholder="Password" required />
           </div>
-          <button className="btn btn-lg btn-block" type="submit">登入</button>
+          <div className="form-suffix">
+            <Link to="/register">還沒有帳號</Link> 或是 <Link to="/forget">忘記密碼？</Link>
+          </div>
+          <button className="btn btn-lg btn-block btn-login" type="submit">登入</button>
         </form>
       </div>
     )
