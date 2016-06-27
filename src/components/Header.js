@@ -1,65 +1,66 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import 'babel-polyfill';
-import classNames from 'classnames'
+import classNames from 'classnames';
 
-import '../styles/Header.css'
+import '../styles/Header.css';
 
-export default class Header extends Component {
+class Header extends Component {
+  static contextTypes = {
+    router: React.PropTypes.object.isRequired,
+  };
+
   constructor(props, context) {
     super(props, context);
     this.state = {
-      user: this.get_user(__INITIAL_USER__),
-    }
+      user: this.getUser(__INITIAL_USER__),
+    };
   }
-
-  static contextTypes = {
-    router: React.PropTypes.object.isRequired
-  };
 
   componentWillMount() {
-    let path = this.props.location.pathname;
+    const path = this.props.location.pathname;
     console.log(path);
-    if(path === "/login" || path === "/register") {
-      if(this.state.user !== null)
+    if (path === '/login' || path === '/register') {
+      if (this.state.user !== null) {
         this.context.router.push('/');
-    }
-    else if(this.state.user === null)
+      }
+    } else if (this.state.user === null) {
       this.context.router.push('/login');
+    }
   }
 
-  get_user(session_id) {
-    console.log("Session ID: " + session_id);
+  getUser(sessionId) {
+    console.log('Session ID: ', sessionId);
     // TODO: Check if session id is available on server
     // Temp solution: dummy user
-    if(session_id === null) return null;
-    else return {/*dummy for now*/};
+    if (sessionId === null) return null;
+    else return { /*dummy for now*/ };
   }
 
   navbarItem() {
-    let path = this.props.location.pathname;
-    if(this.state.user === null) {
+    const path = this.props.location.pathname;
+    if (this.state.user === null) {
       return (
         <div className="collapse navbar-collapse" id="navbar">
           <ul className="nav navbar-nav navbar-right">
-            <li className={classNames( { active: path === "/login" } ) }><Link to="/login">登入</Link></li>
-            <li className={classNames( { active: path === "/register" } ) }><Link to="/register">註冊</Link></li>
+            <li className={classNames({ active: path === '/login' })}><Link to="/login">登入</Link></li>
+            <li className={classNames({ active: path === '/register' })}><Link to="/register">註冊</Link></li>
           </ul>
         </div>
-      )
+      );
+    } else { // Return user status, search bar etc.
+      return (
+        // TODO
+        null
+      );
     }
-    // Return user status, search bar etc.
-    else return (
-      // TODO
-      null
-    )
   }
 
-  Children() {
+  children() {
     const children = React.Children.map(this.props.children,
            (child) => React.cloneElement(child, {
              user: this.state.user,
-          }));
+           }));
     return children;
   }
 
@@ -75,14 +76,16 @@ export default class Header extends Component {
                 <span className="icon-bar"></span>
               </button>
               <a className="navbar-brand" href="/">
-                <img src="/public/resource/eesa-white.png" style={{"maxHeight": "55px"}} />
+                <img alt="" src="/public/resource/eesa-white.png" style={{ maxHeight: '55px' }} />
               </a>
             </div>
             {this.navbarItem()}
           </div>
         </nav>
-        <div className="mainPage">{this.Children()}</div>
+        <div className="mainPage">{this.children()}</div>
       </div>
-    )
+    );
   }
 }
+
+export default Header;
