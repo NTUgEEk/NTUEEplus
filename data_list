@@ -1,0 +1,16 @@
+User:
+	mysql: {
+		EMAIL: String (unique, not null, key),
+		PASSWORD: String (hashed, not null),
+		NAME: String, (姓名)
+		SCHOOL_ID: String, (學號)
+		BIO: String, (自我介紹)
+		ADDRESS: String,
+		PHONE: String,
+		MOBILE: String,
+		PERSONAL_WEBSITE: String, (link)
+		FACEBOOK: String, (link)
+		LINKIN: String, (link)
+	},
+
+
