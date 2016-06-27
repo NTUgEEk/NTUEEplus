@@ -17,12 +17,18 @@ export default class Routing extends Component {
   };
 
   componentWillMount() {
-    if(this.state.user === null)
+    let path = this.props.location.pathname;
+    console.log(path);
+    if(path === "/login" || path === "/register") {
+      if(this.state.user !== null)
+        this.context.router.push('/');
+    }
+    else if(this.state.user === null)
       this.context.router.push('/login');
   }
 
   get_user(session_id) {
-    console.log(session_id);
+    console.log("Session ID: " + session_id);
     // TODO: Check if session id is available on server
     // Temp solution: dummy user
     if(session_id === null) return null;
