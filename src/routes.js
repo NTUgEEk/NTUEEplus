@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, IndexRedirect, IndexRoute } from 'react-router';
 
-import Routing from './components/Routing';
 import Login from './components/Login';
 import Header from './components/Header';
 import Register from './components/Register';
