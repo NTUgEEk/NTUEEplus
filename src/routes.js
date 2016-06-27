@@ -8,7 +8,7 @@ import { Route, IndexRedirect, IndexRoute } from 'react-router';
 import Routing from './components/Routing';
 import Login from './components/Login';
 import Header from './components/Header';
-import Signup from './components/Signup';
+import Register from './components/Register';
 import UserInfo from './components/UserInfo';
 import Aboutme from './components/Aboutme';
 import Abroad from './components/Abroad';
@@ -30,7 +30,7 @@ export default (
       </Route>
     </Route>
     <Route path="login" component={Login} />
-    <Route path="signup" component={Signup} />
+    <Route path="register" component={Register} />
     <Route path="*" component={NotFoundPage} />
   </Route>
 );
