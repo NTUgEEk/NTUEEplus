@@ -14,6 +14,19 @@ User:
 		MS: String,
 		PHD: String,
 		SEARCHING_AREA: String,
+		PRIMARY KEY(EMAIL),
 	},
+
+Work_Experience:
+	mysql: {
+		EMAIL: String, (belongs to who)
+		YEAR: INT,
+		COMPANY: String,
+		TITLE: String,
+		SKETCH: String, (簡述)
+		FOREIGN KEY(EMAIL) REFERENCES User(EMAIL)
+			ON DELETE CASCODE
+			ON UPDATE RESTRICT
+	}
 
 
