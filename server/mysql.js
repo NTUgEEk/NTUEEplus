@@ -1,6 +1,7 @@
 const Mysql = require('mysql');
 
 const User = require('./models/user');
+const WorkExperience = require('./models/work_experience');
 
 const con = Mysql.createConnection({
   host: 'localhost',
@@ -37,4 +38,12 @@ exports.user_checkPassword = (email, password, next) => {
 
 exports.user_checkExist = (email, next) => {
   User.checkExist(con, email, next);
+};
+
+exports.user_updateUser = (email, data, next) => {
+  User.updateUser(con, email, data, next);
+};
+
+exports.work_experience_createWorkExperience = (data, next) => {
+  WorkExperience.createWorkExperience(con, data, next);
 };
