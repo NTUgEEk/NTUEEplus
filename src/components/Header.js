@@ -10,16 +10,21 @@ class Header extends Component {
     router: React.PropTypes.object.isRequired,
   };
 
+  static propTypes = {
+    children: React.PropTypes.node,
+    location: React.PropTypes.object.isRequired,
+  }
+
   constructor(props, context) {
     super(props, context);
     this.state = {
       user: this.getUser(__INITIAL_USER__),
     };
+    this.setUser = this.setUser.bind(this);
   }
 
   componentWillMount() {
     const path = this.props.location.pathname;
-    console.log(path);
     if (path === '/login' || path === '/register') {
       if (this.state.user !== null) {
         this.context.router.push('/');
@@ -34,7 +39,11 @@ class Header extends Component {
     // TODO: Check if session id is available on server
     // Temp solution: dummy user
     if (sessionId === null) return null;
-    else return { /*dummy for now*/ };
+    else return { /* dummy for now */ };
+  }
+
+  setUser(_user) {
+    this.setState({ user: _user });
   }
 
   navbarItem() {
@@ -43,8 +52,12 @@ class Header extends Component {
       return (
         <div className="collapse navbar-collapse" id="navbar">
           <ul className="nav navbar-nav navbar-right">
-            <li className={classNames({ active: path === '/login' })}><Link to="/login">登入</Link></li>
-            <li className={classNames({ active: path === '/register' })}><Link to="/register">註冊</Link></li>
+            <li className={classNames({ active: path === '/login' })}>
+              <Link to="/login">登入</Link>
+            </li>
+            <li className={classNames({ active: path === '/register' })}>
+              <Link to="/register">註冊</Link>
+            </li>
           </ul>
         </div>
       );
@@ -60,6 +73,7 @@ class Header extends Component {
     const children = React.Children.map(this.props.children,
            (child) => React.cloneElement(child, {
              user: this.state.user,
+             setUser: this.setUser,
            }));
     return children;
   }
@@ -70,7 +84,12 @@ class Header extends Component {
         <nav className="navbar navbar-default navbar-fixed-top">
           <div className="container-fluid">
             <div className="navbar-header">
-              <button type="button" className="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+              <button
+                type="button"
+                className="navbar-toggle"
+                data-toggle="collapse"
+                data-target="#navbar"
+              >
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>
                 <span className="icon-bar"></span>

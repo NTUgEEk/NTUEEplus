@@ -55,23 +55,26 @@ router.post('/api/register', (req, res) => {
 });
 
 // Login endpoint
-router.post('/signIn', (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  if (!email || !password) {
-    res.send('login failed');
-  } else {
-    mysql.user_checkPassword(email, password, (err, res2) => {
-      console.log('err', err);
-      console.log('res', res2);
-      if (!err && res) {
-        res.cookie('email', email);
-        res.send('Succeed.');
-      } else {
-        res.send(err);
-      }
-    });
-  }
+router.post('/login', (req, res) => {
+  // const email = req.body.email;
+  // const password = req.body.password;
+  const dummy = null;
+  console.log(req.body);
+  res.json(dummy);
+  // if (!email || !password) {
+  //   res.send('login failed');
+  // } else {
+  //   mysql.user_checkPassword(email, password, (err, res2) => {
+  //     console.log('err', err);
+  //     console.log('res', res2);
+  //     if (!err && res) {
+  //       res.cookie('email', email);
+  //       res.send('Succeed.');
+  //     } else {
+  //       res.send(err);
+  //     }
+  //   });
+  // }
 });
 
 router.get('/logOut', (req, res) => {
@@ -86,7 +89,7 @@ router.get('/content', auth, (req, res) => {
 });
 
 router.post('/formSignIn', (req, res) => {
-  console.log('req: ', req);
+  // console.log('req: ', req);
   console.log('password:', req.body.inputPassword);
   res.send('Succeed');
 });

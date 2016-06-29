@@ -19,6 +19,17 @@ body {
   margin-bottom: 15px;
   padding-right: 20px;
 }
+.form-error {
+  height: 30px;
+  line-height: 30px;
+  float: left;
+  margin-bottom: 15px;
+  color: red;
+  display: none;
+}
+.error {
+  display: initial;
+}
 .btn-login {
   background-color: #B8D4FE;
 }
