@@ -5,6 +5,10 @@ const bcrypt = require('bcrypt');
 
 const mysql = require('./mysql');
 
+const randomString = () => {
+  return Math.random().toString(36);
+};
+
 const getBcrypt = (password, next) => {
   bcrypt.genSalt(10, (err, salt) => {
     if (err) next(password);
@@ -21,23 +25,23 @@ const getBcrypt = (password, next) => {
   return hash;
 };
 
-let sessionId = 0;
-
-const dummy = {
-  id: 0,  // This should be added for internal usage!
-  email: 'dummy@dummy',
-  name: 'Dummy',
-  // password: String, // Do not send the password back to client!!
-  bio: 'I\'m dummy',
-  address: 'Somewhere on the planet',
-  phone: '02-8888-8888',
-  mobile: '0900-000-000',
-  personal_website: 'http://topjohnwu.github.io/donate/',
-  facebook: 'http://topjohnwu.github.io/donate/',
-  linkin: 'http://topjohnwu.github.io/donate/',
-  ms: '',
-  phd: '',
-  searching_area: '',
+const user_MysqlToJson = (user) => {
+  const jsonUser = {
+    id: user.ID,
+    email: user.EMAIL,
+    name: user.NAME,
+    bio: user.BIO,
+    address: user.ADDRESS,
+    phone: user.PHONE,
+    mobile: user.MOBILE,
+    personal_website: user.PERSONAL_WEBSITE,
+    facebook: user.FACEBOOK,
+    linkin: user.LINKIN,
+    ms: user.MS,
+    phd: user.PHD,
+    searching_area: user.SEARCHING_AREA,
+  };
+  return jsonUser;
 };
 
 const auth = (req, res, next) => {
@@ -56,7 +60,8 @@ const auth = (req, res, next) => {
 
 router.post('/api/register', (req, res) => {
   console.log('body', req.body);
-  if (!req.body.email || !req.body.password) {
+  const email = req.body.email;
+  if (!email || !req.body.password) {
     res.json({ success: false, msg: 'Please pass email and password.' });
   } else {
     getBcrypt(req.body.password, (hash) => {
@@ -65,7 +70,7 @@ router.post('/api/register', (req, res) => {
         res.send('Bcrypt Error.');
       } else {
         const newUser = {
-          EMAIL: req.body.email,
+          EMAIL: email,
           PASSWORD: hash,
         };
 
@@ -79,8 +84,17 @@ router.post('/api/register', (req, res) => {
           } else if (!result) {
             res.send(result);
           } else {
-            res.cookie('email', newUser.email);
-            res.send('Succeed.');
+            // res.cookie('email', newUser.email);
+            // res.send('Succeed.');
+            const sessionId = randomString();
+            mysql.user_updateUser(email, { sessionId }, (err2, result2) => {
+              if (err2 || !result2) {
+                res.json(null);
+              } else {
+                res.cookie('session', sessionId);
+                res.json(user_MysqlToJson({ email }));
+              }
+            });
           }
         });
       }
@@ -88,62 +102,52 @@ router.post('/api/register', (req, res) => {
   }
 });
 
-
 router.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  // TODO: Should be replaced by proper session id generation
-
-  sessionId = Math.floor((Math.random() * 1000) + 1); // Fake session id
-
-  // TODO: Should check database and fetch the user data
-
-  if (email === 'dummy@dummy' && password === 'dummy') {
-    res.cookie('session', sessionId);
-    res.json(dummy);
-  } else res.json(null);
-
-  // if (!email || !password) {
-  //   res.send('login failed');
-  // } else {
-  //   mysql.user_checkPassword(email, password, (err, res2) => {
-  //     console.log('err', err);
-  //     console.log('res', res2);
-  //     if (!err && res) {
-  //       res.cookie('email', email);
-  //       res.send('Succeed.');
-  //     } else {
-  //       res.send(err);
-  //     }
-  //   });
-  // }
+  mysql.user_checkPassword(email, password, (err, result, user) => {
+    if (err || !result) {
+      req.json(null);
+    } else {
+      const sessionId = randomString();
+      mysql.user_updateUser(email, { sessionId }, (err2, result2) => {
+        if (err2 || !result2) {
+          res.json(null);
+        } else {
+          res.cookie('session', sessionId);
+          res.json(user_MysqlToJson(user));
+        }
+      });
+    }
+  });
 });
 
-router.post('/session', (req, res) => {
-  const id = req.body.id;
+router.post('/session', (req, res) => { // get
+  const sessionId = req.body.id; // req.cookies.session
 
-  // TODO: Should be replaced by proper session check
-
-  if (id == sessionId) res.json(dummy);
-
-  // "==" is intended, don't change it as eslint suggest!!
-  // Cookies can only be stored as strings, to compare
-  // the strings with numbers, we have to use "=="
-
-  else res.json(null);
+  mysql.user_fetchBySessionId(sessionId, (err, user) => {
+    if (err || !user) {
+      res.json(null);
+    } else {
+      res.json(user_MysqlToJson(user));
+    }
+  });
 });
 
 router.get('/logout', (req, res) => {
+  const sessionId = req.cookies.session;
 
-  // TODO: Proper session id removal
-
-  sessionId = 0;
-
-  // const email = req.cookies.email;
-  // console.log('logOut email', email);
-  // res.cookie('email', 'undefined');
-  // res.send('logOut success!');
+  mysql.user_logOut(sessionId, (err, result) => {
+    if (err) {
+      res.send(err);
+    } else if (!result) {
+      res.json('Logout error');
+    } else {
+      res.cookie('session', null);
+      res.json('Succeed logout.');
+    }
+  });
 });
 
 router.get('/content', auth, (req, res) => {

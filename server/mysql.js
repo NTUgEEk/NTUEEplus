@@ -44,6 +44,14 @@ exports.user_updateUser = (email, data, next) => {
   User.updateUser(con, email, data, next);
 };
 
+exports.user_fetchBySessionId = (sessionId, next) => {
+  User.fetchBySessionId(con, sessionId, next);
+};
+
+exports.user_logOut = (sessionId, next) => {
+  User.logOut(con, sessionId, next);
+};
+
 exports.work_experience_createWorkExperience = (data, next) => {
   WorkExperience.createWorkExperience(con, data, next);
 };
