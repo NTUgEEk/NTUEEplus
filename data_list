@@ -1,4 +1,4 @@
-User:
+USER:
 	mysql: {
 		EMAIL VARCHAR(255) not null unique,
 	    NAME VARCHAR(255),
@@ -34,7 +34,7 @@ User:
 		searching_area: String,
 	}
 
-Work_Experience:
+WORK_EXPERIENCE:
 	mysql: {
 		EMAIL VARCHAR(255),
 		YEAR VARCHAR(255),
