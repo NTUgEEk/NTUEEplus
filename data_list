@@ -1,0 +1,32 @@
+User:
+	mysql: {
+		EMAIL: String (unique, not null, key),
+		PASSWORD: String (hashed, not null),
+		NAME: String, (姓名)
+		SCHOOL_ID: String, (學號)
+		BIO: String, (自我介紹)
+		ADDRESS: String,
+		PHONE: String,
+		MOBILE: String,
+		PERSONAL_WEBSITE: String, (link)
+		FACEBOOK: String, (link)
+		LINKIN: String, (link)
+		MS: String,
+		PHD: String,
+		SEARCHING_AREA: String,
+		PRIMARY KEY(EMAIL),
+	},
+
+Work_Experience:
+	mysql: {
+		EMAIL: String, (belongs to who)
+		YEAR: INT,
+		COMPANY: String,
+		TITLE: String,
+		SKETCH: String, (簡述)
+		FOREIGN KEY(EMAIL) REFERENCES User(EMAIL)
+			ON DELETE CASCODE
+			ON UPDATE RESTRICT
+	}
+
+
