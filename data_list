@@ -1,32 +1,57 @@
 User:
 	mysql: {
-		EMAIL: String (unique, not null, key),
-		PASSWORD: String (hashed, not null),
-		NAME: String, (姓名)
-		SCHOOL_ID: String, (學號)
-		BIO: String, (自我介紹)
-		ADDRESS: String,
-		PHONE: String,
-		MOBILE: String,
-		PERSONAL_WEBSITE: String, (link)
-		FACEBOOK: String, (link)
-		LINKIN: String, (link)
-		MS: String,
-		PHD: String,
-		SEARCHING_AREA: String,
+		EMAIL VARCHAR(255) not null unique,
+	    NAME VARCHAR(255),
+	    PASSWORD VARCHAR(255) not null,
+	    BIO VARCHAR(2048),
+		ADDRESS VARCHAR(255),
+		PHONE VARCHAR(255),
+		MOBILE VARCHAR(255),
+		PERSONAL_WEBSITE VARCHAR(255),
+		FACEBOOK VARCHAR(255),
+		LINKIN VARCHAR(255),
+		MS VARCHAR(255),
+		PHD VARCHAR(255),
+		SEARCHING_AREA VARCHAR(255),
 		PRIMARY KEY(EMAIL),
+	    create_at timestamp default current_timestamp,
+	    update_at timestamp default current_timestamp on update current_timestamp
 	},
+
+	json: {
+		email: String,
+		name: String,
+		password: String,
+		bio: String,
+		address: String,
+		phone: String,
+		mobile: String,
+		personal_website: String,
+		facebook: String,
+		linkin: String,
+		ms: String,
+		phd: String,
+		searching_area: String,
+	}
 
 Work_Experience:
 	mysql: {
-		EMAIL: String, (belongs to who)
-		YEAR: INT,
-		COMPANY: String,
-		TITLE: String,
-		SKETCH: String, (簡述)
-		FOREIGN KEY(EMAIL) REFERENCES User(EMAIL)
-			ON DELETE CASCODE
+		EMAIL VARCHAR(255),
+		YEAR VARCHAR(255),
+		COMPANY VARCHAR(255),
+		TITLE VARCHAR(255),
+		SKETCH VARCHAR(2048),
+		FOREIGN KEY(EMAIL) REFERENCES USER(EMAIL)
+			ON DELETE CASCADE
 			ON UPDATE RESTRICT
+	},
+
+	json: {
+		email: String,
+		year: String,
+		company: String,
+		title: String,
+		sketch: String,
 	}
 
 
