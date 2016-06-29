@@ -5,7 +5,17 @@ const bcrypt = require('bcrypt');
 
 const mysql = require('./mysql');
 
-const getBcrypt = (password) => {
+const getBcrypt = (password, next) => {
+  bcrypt.genSalt(10, (err, salt) => {
+    if (err) next(password);
+    else {
+      bcrypt.hash(password, salt, (err2, hash) => {
+        if (err2) next(password);
+        else next(hash);
+      });
+    }
+  });
+
   const salt = bcrypt.genSaltSync(10);
   const hash = bcrypt.hashSync(password, salt);
   return hash;
@@ -49,25 +59,30 @@ router.post('/api/register', (req, res) => {
   if (!req.body.email || !req.body.password) {
     res.json({ success: false, msg: 'Please pass email and password.' });
   } else {
-    const hash = getBcrypt(req.body.password);
-    console.log('hash', hash);
-    const newUser = {
-      EMAIL: req.body.email,
-      PASSWORD: hash,
-    };
-
-    console.log('create new user: ', newUser);
-    mysql.user_createUser(newUser, (err, result) => {
-      console.log('err', err);
-      console.log('result', result);
-      if (err) {
-        console.log(err);
-        res.send(err);
-      } else if (!result) {
-        res.send(result);
+    getBcrypt(req.body.password, (hash) => {
+      if (hash === req.body.password) {
+        console.log('bcrypt err...!');
+        res.send('Bcrypt Error.');
       } else {
-        res.cookie('email', newUser.email);
-        res.send('Succeed.');
+        const newUser = {
+          EMAIL: req.body.email,
+          PASSWORD: hash,
+        };
+
+        console.log('create new user: ', newUser);
+        mysql.user_createUser(newUser, (err, result) => {
+          console.log('err', err);
+          console.log('result', result);
+          if (err) {
+            console.log(err);
+            res.send(err);
+          } else if (!result) {
+            res.send(result);
+          } else {
+            res.cookie('email', newUser.email);
+            res.send('Succeed.');
+          }
+        });
       }
     });
   }
