@@ -64,5 +64,3 @@ WORK_EXPERIENCE:
     title: String,
     sketch: String,
   }
-
-
