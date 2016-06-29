@@ -11,6 +11,25 @@ const getBcrypt = (password) => {
   return hash;
 };
 
+let sessionId = 0;
+
+const dummy = {
+  id: 0,  // This should be added for internal usage!
+  email: 'dummy@dummy',
+  name: 'Dummy',
+  // password: String, // Do not send the password back to client!!
+  bio: 'I\'m dummy',
+  address: 'Somewhere on the planet',
+  phone: '02-8888-8888',
+  mobile: '0900-000-000',
+  personal_website: 'http://topjohnwu.github.io/donate/',
+  facebook: 'http://topjohnwu.github.io/donate/',
+  linkin: 'http://topjohnwu.github.io/donate/',
+  ms: '',
+  phd: '',
+  searching_area: '',
+};
+
 const auth = (req, res, next) => {
   const email = req.cookies.email;
   console.log('auth email', email);
@@ -54,13 +73,22 @@ router.post('/api/register', (req, res) => {
   }
 });
 
-// Login endpoint
+
 router.post('/login', (req, res) => {
-  // const email = req.body.email;
-  // const password = req.body.password;
-  const dummy = null;
-  console.log(req.body);
-  res.json(dummy);
+  const email = req.body.email;
+  const password = req.body.password;
+
+  // TODO: Should be replaced by proper session id generation
+
+  sessionId = Math.floor((Math.random() * 1000) + 1); // Fake session id
+
+  // TODO: Should check database and fetch the user data
+
+  if (email === 'dummy@dummy' && password === 'dummy') {
+    res.cookie('session', sessionId);
+    res.json(dummy);
+  } else res.json(null);
+
   // if (!email || !password) {
   //   res.send('login failed');
   // } else {
@@ -77,11 +105,30 @@ router.post('/login', (req, res) => {
   // }
 });
 
-router.get('/logOut', (req, res) => {
-  const email = req.cookies.email;
-  console.log('logOut email', email);
-  res.cookie('email', 'undefined');
-  res.send('logOut success!');
+router.post('/session', (req, res) => {
+  const id = req.body.id;
+
+  // TODO: Should be replaced by proper session check
+
+  if (id == sessionId) res.json(dummy);
+
+  // "==" is intended, don't change it as eslint suggest!!
+  // Cookies can only be stored as strings, to compare
+  // the strings with numbers, we have to use "=="
+
+  else res.json(null);
+});
+
+router.get('/logout', (req, res) => {
+
+  // TODO: Proper session id removal
+
+  sessionId = 0;
+
+  // const email = req.cookies.email;
+  // console.log('logOut email', email);
+  // res.cookie('email', 'undefined');
+  // res.send('logOut success!');
 });
 
 router.get('/content', auth, (req, res) => {

@@ -13,10 +13,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 </head>
-<script>
-  // var __INITIAL_USER__ = 1234;  // Simulate login
-  var __INITIAL_USER__ = null;  // Simulate no cookie
-</script>
 
 <body>
   <div id="root"></div>

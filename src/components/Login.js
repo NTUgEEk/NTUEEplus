@@ -12,6 +12,7 @@ class Login extends Component {
 
   static propTypes = {
     setUser: React.PropTypes.func,
+    fetchJSON: React.PropTypes.func,
   }
 
   constructor() {
@@ -28,25 +29,18 @@ class Login extends Component {
 
   signIn(e) {
     e.preventDefault();
-    console.log('signIn clicked.');
-    fetch('/api/login', {
-      method: 'post',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    this.props.fetchJSON(
+      '/api/login',
+      {
         email: this.state.email,
         password: this.state.password,
-      }),
-    })
-      .then(res => { console.log(res); return res.json(); })
-      .then(json => {
+      },
+      json => {
         if (json !== null) {
           this.props.setUser(json);
           this.context.router.push('/');
-        } else this.setState({ invalid: true });
-      });
+        } else this.setState({ invalid: true }); }
+    );
   }
 
   handleEmailChange(e) {

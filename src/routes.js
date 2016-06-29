@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, IndexRedirect, IndexRoute } from 'react-router';
+import { Route, IndexRoute } from 'react-router';
 
 import Login from './components/Login';
 import Header from './components/Header';
