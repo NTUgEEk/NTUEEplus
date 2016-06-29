@@ -1,57 +1,68 @@
 USER:
-	mysql: {
-		EMAIL VARCHAR(255) not null unique,
-	    NAME VARCHAR(255),
-	    PASSWORD VARCHAR(255) not null,
-	    BIO VARCHAR(2048),
-		ADDRESS VARCHAR(255),
-		PHONE VARCHAR(255),
-		MOBILE VARCHAR(255),
-		PERSONAL_WEBSITE VARCHAR(255),
-		FACEBOOK VARCHAR(255),
-		LINKIN VARCHAR(255),
-		MS VARCHAR(255),
-		PHD VARCHAR(255),
-		SEARCHING_AREA VARCHAR(255),
-		PRIMARY KEY(EMAIL),
-	    create_at timestamp default current_timestamp,
-	    update_at timestamp default current_timestamp on update current_timestamp
-	},
+  mysql:
+    create table USER (
+      ID int(11) not null AUTO_INCREMENT,
+      EMAIL VARCHAR(255) not null unique,
+      NAME VARCHAR(255),
+      PASSWORD VARCHAR(255) not null,
+      BIO VARCHAR(2048),
+      ADDRESS VARCHAR(255),
+      PHONE VARCHAR(255),
+      MOBILE VARCHAR(255),
+      PERSONAL_WEBSITE VARCHAR(255),
+      FACEBOOK VARCHAR(255),
+      LINKIN VARCHAR(255),
+      MS VARCHAR(255),
+      PHD VARCHAR(255),
+      SEARCHING_AREA VARCHAR(255),
+      PRIMARY KEY(ID),
+      create_at timestamp default current_timestamp,
+      update_at timestamp default current_timestamp on update current_timestamp
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
-	json: {
-		email: String,
-		name: String,
-		password: String,
-		bio: String,
-		address: String,
-		phone: String,
-		mobile: String,
-		personal_website: String,
-		facebook: String,
-		linkin: String,
-		ms: String,
-		phd: String,
-		searching_area: String,
-	}
+    create index UId on USER(ID);
+
+  json: {
+    id: int,
+    email: String,
+    name: String,
+    password: String,
+    bio: String,
+    address: String,
+    phone: String,
+    mobile: String,
+    personal_website: String,
+    facebook: String,
+    linkin: String,
+    ms: String,
+    phd: String,
+    searching_area: String,
+  }
 
 WORK_EXPERIENCE:
-	mysql: {
-		EMAIL VARCHAR(255),
-		YEAR VARCHAR(255),
-		COMPANY VARCHAR(255),
-		TITLE VARCHAR(255),
-		SKETCH VARCHAR(2048),
-		FOREIGN KEY(EMAIL) REFERENCES USER(EMAIL)
-			ON DELETE CASCADE
-			ON UPDATE RESTRICT
-	},
+  mysql:
+    create table WORK_EXPERIENCE (
+      ID int(11) not null AUTO_INCREMENT,
+      USER_ID int(11) not null,
+      YEAR VARCHAR(255),
+      COMPANY VARCHAR(255),
+      TITLE VARCHAR(255),
+      SKETCH VARCHAR(2048),
+      PRIMARY KEY(ID),
+      FOREIGN KEY(USER_ID) REFERENCES USER(ID)
+        ON DELETE CASCADE
+        ON UPDATE RESTRICT
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
-	json: {
-		email: String,
-		year: String,
-		company: String,
-		title: String,
-		sketch: String,
-	}
+    create index WId on WORK_EXPERIENCE(ID);
+
+  json: {
+    id: int,
+    user_id: int,
+    year: String,
+    company: String,
+    title: String,
+    sketch: String,
+  }
 
 
