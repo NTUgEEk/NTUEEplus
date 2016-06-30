@@ -21,8 +21,13 @@ class Header extends Component {
     this.state = {
       user: null,
       fetchDone: false,
+      searchType: 'name',
+      searchKey: '',
     };
     this.setUser = this.setUser.bind(this);
+    this.search = this.search.bind(this);
+    this.handleSearchTypeChange = this.handleSearchTypeChange.bind(this);
+    this.handleSearchKeyChange = this.handleSearchKeyChange.bind(this);
   }
 
   componentWillMount() {
@@ -82,6 +87,32 @@ class Header extends Component {
     return null;
   }
 
+  search(e) {
+    e.preventDefault();
+    console.log('fuck');
+    this.context.router.push('/search?type=' + this.state.searchType + '&key=' + this.state.searchKey);
+    // this.props.fetchJSON(
+    //   '/api/login',
+    //   {
+    //     email: this.state.email,
+    //     password: this.state.password,
+    //   },
+    //   json => {
+    //     if (json !== null) {
+    //       this.props.setUser(json);
+    //       this.context.router.push('/');
+    //     } else this.setState({ invalid: true }); }
+    // );
+  }
+
+  handleSearchTypeChange(e) {
+    this.setState({ searchType: e.target.value });
+  }
+
+  handleSearchKeyChange(e) {
+    this.setState({ searchKey: e.target.value });
+  }
+
   navbarItem() {
     const path = this.props.location.pathname;
     if (this.state.user === null) {
@@ -98,9 +129,13 @@ class Header extends Component {
     } else { // Return user status, search bar etc.
       return (
         <div>
-          <form className="navbar-form navbar-left">
+          <form className="navbar-form navbar-left" onSubmit={this.search}>
             <div className="form-group">
-              <select className="form-control search-switch" id="sel1">
+              <select
+                className="form-control search-switch"
+                value={this.state.searchType}
+                onChange={this.handleSearchTypeChange}
+              >
                 <option value="name">姓名</option>
                 <option value="school_id">學號</option>
                 <option value="res">研究</option>
@@ -109,7 +144,13 @@ class Header extends Component {
               </select>
             </div>
             <div className="form-group search-bar">
-              <input type="text" placeholder="輸入關鍵字" className="form-control search-input" />
+              <input
+                type="text"
+                placeholder="輸入關鍵字"
+                className="form-control search-input"
+                value={this.state.searchKey}
+                onChange={this.handleSearchKeyChange}
+              />
             </div>
             <button type="submit" className="btn btn-primary">搜尋</button>
           </form>
