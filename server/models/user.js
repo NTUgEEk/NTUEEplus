@@ -1,5 +1,15 @@
 const bcrypt = require('bcrypt');
 
+exports.search = (con, key, value, next) => {
+  con.query('SELECT * FROM USER WHERE ? LIKE ?', [key, `%${value}%`], (err, rows) => {
+    const newRows = rows;
+    for (let i = 0; i < newRows.length; ++i) {
+      newRows[i].PASSWORD = null;
+    }
+    next(err, newRows);
+  });
+};
+
 exports.createUser = (con, data, next) => {
   con.query('INSERT INTO USER SET ?', data, next);
 };
