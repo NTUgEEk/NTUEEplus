@@ -1,0 +1,18 @@
+.profile-page {
+  padding: 50px;
+  /*max-width: 90%;*/
+  margin: 0 auto;
+}
+
+.inner-page {
+  background-color: white;
+}
+
+.jumbotron {
+  margin-top: 50px;
+}
+
+.profile-pic {
+  margin-bottom: 20px;
+  max-height: 200px;
+}
