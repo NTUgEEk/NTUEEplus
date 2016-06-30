@@ -5,27 +5,19 @@ import classNames from 'classnames';
 
 import '../styles/Aboutme.css';
 
-class Home extends Component {
+class Aboutme extends Component {
   static contextTypes = {
     router: React.PropTypes.object.isRequired,
   };
 
   static propTypes = {
+    user: React.PropTypes.object,
     setUser: React.PropTypes.func,
     fetchJSON: React.PropTypes.func,
   }
 
-  constructor() {
-    super();
-    this.state = {
-      email: '',
-      password: '',
-      invalid: false,
-    };
-  }
-
-
   render() {
+    if (this.props.user === null) return null;
     return (
       <div className="container">
         <div className="jumbotron">
@@ -41,4 +33,4 @@ class Home extends Component {
   }
 }
 
-export default Home;
+export default Aboutme;
