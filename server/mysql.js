@@ -28,6 +28,10 @@ try {
 }
 
 
+exports.user_search = (key, value, next) => {
+  User.search(con, key, value, next);
+};
+
 exports.user_createUser = (data, next) => {
   User.createUser(con, data, next);
 };
