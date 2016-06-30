@@ -16,6 +16,7 @@ USER:
       MS VARCHAR(255),
       PHD VARCHAR(255),
       SEARCHING_AREA VARCHAR(255),
+      SESSIONID VARCHAR(255) unique,
       PRIMARY KEY(ID),
       create_at timestamp default current_timestamp,
       update_at timestamp default current_timestamp on update current_timestamp
