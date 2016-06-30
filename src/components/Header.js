@@ -109,7 +109,7 @@ class Header extends Component {
               </select>
             </div>
             <div className="form-group search-bar">
-              <input type="text" placeholder="輸入關鍵字" className="form-control" />
+              <input type="text" placeholder="輸入關鍵字" className="form-control search-input" />
             </div>
             <button type="submit" className="btn btn-primary">搜尋</button>
           </form>

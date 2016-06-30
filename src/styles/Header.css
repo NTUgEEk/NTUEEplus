@@ -37,6 +37,7 @@
 .dropdown-menu {
   /*background-color: #FFFFFF;*/
   border-radius: 10px;
+  width: 200px;
 }
 
 .navbar-collapse {
@@ -53,10 +54,6 @@
 }
 .navbar-default .navbar-toggle .icon-bar {
   background-color: white;
-}
-
-.search-switch {
-  width: 75px;
 }
 
 .search-bar {
@@ -78,9 +75,16 @@
   }
   .navbar-form {
     margin: 20px 0;
-    width: calc(100% - 350px)
+    width: calc(100% - 500px);
+    min-width: 380px;
   }
-  .navbar-form .form-control {
+  .search-bar {
+    width: calc(100% - 200px);
+  }
+  .navbar-form .search-switch {
+    width: 75px;
+  }
+  .navbar-form .search-input {
     width: 100%;
   }
 }
