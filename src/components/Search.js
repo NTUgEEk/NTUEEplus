@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import 'babel-polyfill';
 
-class Carrier extends Component {
+class Search extends Component {
   static contextTypes = {
     router: React.PropTypes.object.isRequired,
   };
@@ -17,11 +17,12 @@ class Carrier extends Component {
     return (
       <div className="container">
         <div className="jumbotron">
-          <h2 className="text-center">Carrier information</h2>
+          <h2 className="text-center">{`Type: ${this.props.location.query.type}`}</h2>
+          <h2 className="text-center">{`Keyword: ${this.props.location.query.key}`}</h2>
         </div>
       </div>
     );
   }
 }
 
-export default Carrier;
+export default Search;

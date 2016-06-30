@@ -77,7 +77,7 @@ class Header extends Component {
   // Read cookie with name, quite obvious :)
 
   readCookie(name) {
-    const nameEQ = name + '=';
+    const nameEQ = `${name}=`;
     const ca = document.cookie.split(';');
     for (let i = 0; i < ca.length; i++) {
       let c = ca[i];
@@ -90,7 +90,7 @@ class Header extends Component {
   search(e) {
     e.preventDefault();
     console.log('fuck');
-    this.context.router.push('/search?type=' + this.state.searchType + '&key=' + this.state.searchKey);
+    this.context.router.push(`/search?type=${this.state.searchType}&key=${this.state.searchKey}`);
     // this.props.fetchJSON(
     //   '/api/login',
     //   {
@@ -176,8 +176,8 @@ class Header extends Component {
                 <li><Link to="/carrier">人才媒合</Link></li>
                 <li role="separator" className="divider"></li>
                 {/* <li className="dropdown-header">Nav header</li> */}
-                <li><Link to="#">客服專區</Link></li>
-                <li><Link to="#">帳號設定</Link></li>
+                <li><Link to="/support">客服專區</Link></li>
+                <li><Link to="/settings">帳號設定</Link></li>
                 <li><Link to="/logout">登出</Link></li>
               </ul>
             </li>
