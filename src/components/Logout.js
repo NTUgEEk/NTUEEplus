@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import 'babel-polyfill';
 import fetch from 'isomorphic-fetch';
 
 class Logout extends Component {
