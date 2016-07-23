@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import 'babel-polyfill';
 
 import '../styles/Register.css';
 

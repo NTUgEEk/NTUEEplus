@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import 'babel-polyfill';
 
 class Support extends Component {
   static contextTypes = {
