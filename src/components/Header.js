@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import classNames from 'classnames';
-import fetch from 'isomorphic-fetch';
+import { fetchJSON, readCookie } from '../utils';
 
 import '../styles/Header.css';
 
@@ -30,36 +30,15 @@ class Header extends Component {
   }
 
   componentWillMount() {
-    this.fetchJSON(
+    fetchJSON(
       '/api/session',
-      { id: this.readCookie('session') },
+      { id: readCookie('session') },
       json => this.setState({ user: json, fetchDone: true })
     );
   }
 
   setUser(_user) {
     this.setState({ user: _user });
-  }
-
-  // API for fetching json
-  // Send reqJSON to url, get json response, and use jsonFunc to set states or other process
-  // Remember to bind "this" to jsonFunc, or use ()=>{}, just like what I did in several places
-
-  fetchJSON(url, reqJSON, jsonFunc) {
-    fetch(url, {
-      credentials: 'include',
-      method: 'post',
-      headers: {
-        Accept: 'basic, application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(reqJSON),
-    })
-      .then((res) => res.json())
-      .then((json) => {
-        console.log('Fetched JSON:', json);
-        jsonFunc(json);
-      });
   }
 
   redirectPage() {
@@ -73,35 +52,9 @@ class Header extends Component {
     }
   }
 
-  // Read cookie with name, quite obvious :)
-
-  readCookie(name) {
-    const nameEQ = `${name}=`;
-    const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
-  }
-
   search(e) {
     e.preventDefault();
-    console.log('fuck');
     this.context.router.push(`/search?type=${this.state.searchType}&key=${this.state.searchKey}`);
-    // this.props.fetchJSON(
-    //   '/api/login',
-    //   {
-    //     email: this.state.email,
-    //     password: this.state.password,
-    //   },
-    //   json => {
-    //     if (json !== null) {
-    //       this.props.setUser(json);
-    //       this.context.router.push('/');
-    //     } else this.setState({ invalid: true }); }
-    // );
   }
 
   handleSearchTypeChange(e) {
@@ -165,7 +118,7 @@ class Header extends Component {
               >
                 <img
                   alt=""
-                  src={'/public/users/' + this.state.user.id + '/profile.png'}
+                  src={`/public/users/${this.state.user.id}/profile.png`}
                 />
                 {this.state.user.name}
               </a>
@@ -191,7 +144,6 @@ class Header extends Component {
            (child) => React.cloneElement(child, {
              user: this.state.user,
              setUser: this.setUser,
-             fetchJSON: this.fetchJSON,
            }));
     return children;
   }
