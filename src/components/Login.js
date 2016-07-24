@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import classNames from 'classnames';
+import { fetchJSON } from '../utils';
 
 import '../styles/Login.css';
 
@@ -11,7 +12,6 @@ class Login extends Component {
 
   static propTypes = {
     setUser: React.PropTypes.func,
-    fetchJSON: React.PropTypes.func,
   }
 
   constructor() {
@@ -28,7 +28,7 @@ class Login extends Component {
 
   signIn(e) {
     e.preventDefault();
-    this.props.fetchJSON(
+    fetchJSON(
       '/api/login',
       {
         email: this.state.email,

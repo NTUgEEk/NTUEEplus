@@ -8,7 +8,6 @@ class Search extends Component {
   static propTypes = {
     user: React.PropTypes.object,
     setUser: React.PropTypes.func,
-    fetchJSON: React.PropTypes.func,
   }
 
   render() {
