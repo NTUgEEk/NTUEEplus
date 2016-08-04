@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 
 const mysql = require('./mysql');
 
+const googlesheet = require('./googlesheet');
+
 const getBcrypt = (password, next) => {
   bcrypt.genSalt(10, (err, salt) => {
     if (err) next(password);
