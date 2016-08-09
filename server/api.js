@@ -7,6 +7,8 @@ const bcrypt = require('bcrypt');
 
 const mysql = require('./mysql');
 
+const elasticsearch = require('./elasticsearch');
+
 const getBcrypt = (password, next) => {
   bcrypt.genSalt(10, (err, salt) => {
     if (err) next(password);
