@@ -17,9 +17,9 @@ console.log("TOKEN_DIR", TOKEN_DIR);
 /**
  *  params example:
  *  {
- *    "sheet": "sheet 1",
+ *    "sheet": "B70",
  *    "start": "A2",
- *    "end": "E",
+ *    "end": "Q",
  *  }
  */
 
@@ -119,7 +119,7 @@ function listMajors(auth, params) {
   var range = params.sheet + '!' + params.start + ':' + params.end;
   sheets.spreadsheets.values.get({
     auth: auth,
-    spreadsheetId: '14981fJiUj6DoKA6qnBMNe_eOy6Vcb6UPPSkxMKmGFjE',
+    spreadsheetId: '1D58ISBmFYyfVzkbkuNQjQOQQZPBtKXQu2tVaLlH6AdI',
     range: range, // 'sheet response 1!A2:E'
   }, function(err, response) {
     if (err) {
