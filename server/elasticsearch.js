@@ -1,3 +1,5 @@
+// api: https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html#api-search
+
 const ElasticSearch = require('elasticsearch');
 const client = new ElasticSearch.Client({
   host: 'localhost:9200',
@@ -16,22 +18,6 @@ client.ping({
     console.log('All is well');
   }
 });
-
-// client.search({
-//   index: 'bank',
-//   type: 'account',
-//   body: {
-//     query: {
-//       match: {
-//         gender: 'M',
-//       },
-//     },
-//   },
-// }).then((resp) => {
-//   console.log('hit', resp.hits.hits);
-// }, (err) => {
-//   console.trace(err.message);
-// });
 
 const parseData = (data) => {
   const people = [];
@@ -83,6 +69,80 @@ exports.setupDatabase = (data) => {
   });
 };
 
-exports.search = () => {
+exports.getUserById = (id, next) => {
+  client.search({
+    index: 'ntuee',
+    type: 'user',
+    id, // id: id,
+  }).then((resp) => {
+    console.log('resp', resp);
+  }, (err) => {
+    console.trace(err.message);
+    next(err);
+  });
+};
 
+exports.getUserBySchool_Id = (schoolId, next) => {
+  client.search({
+    index: 'ntuee',
+    type: 'user',
+    body: {
+      query: {
+        match: {
+          school_id: schoolId,
+        },
+      },
+    },
+  }).then((resp) => {
+    console.log('hit', resp.hits.hits);
+    next(resp.hits.hits);
+  }, (err) => {
+    console.trace(err.message);
+    next(err);
+  });
+};
+
+exports.updateUserById = (id, doc, next) => {
+  client.update({
+    index: 'ntuee',
+    type: 'user',
+    id, // id: id,
+    body: {
+      doc, // doc, doc
+    },
+  }).then((resp) => {
+    next(resp);
+  }, (err) => {
+    console.trace(err.message);
+    next(err);
+  });
+};
+
+exports.search = (strings, next) => {
+  let myQuery = '';
+  if (strings.length !== 0) {
+    myQuery = `\'${strings[0]}\'`;
+  }
+  for (let i = 1; i < strings.length; ++i) {
+    myQuery = `${myQuery} OR \'${strings[i]}\'`;
+  }
+
+  client.search({
+    index: 'ntuee',
+    type: 'user',
+    body: {
+      query: {
+        query_string: {
+          // fields: ['name', 'email'],
+          query: myQuery,
+        },
+      },
+    },
+  }).then((resp) => {
+    console.log('hit', resp.hits.hits);
+    next(resp.hits.hits);
+  }, (err) => {
+    console.trace(err.message);
+    next(err);
+  });
 };
