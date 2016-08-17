@@ -50,7 +50,7 @@ const parseData = (data) => {
   return people;
 };
 
-exports.setupDatabase = (data) => {
+exports.setupDatabase = (data, next) => {
   const people = parseData(data);
   const body = [];
   for (let i = 0, length = people.length; i < length; ++i) {
@@ -67,23 +67,51 @@ exports.setupDatabase = (data) => {
     body, // body: body
   }).then((resp) => {
     console.log('resp in setup', resp);
+    next(null, resp);
   }).catch((err) => {
     console.log('err in setup', err);
+    next(err);
   });
 };
+/**
+ *  success example:
+ *  {
+ *    "_index": "ntuee",
+ *    "_type": "user",
+ *    "_id": "1",
+ *    "_version": 1,
+ *    "found": true,
+ *    "_source": {
+ *      "school_id": "B70203011",
+ *      "name": "何建勳"
+ *    }
+ *  }
+*/
 
 exports.getUserById = (id, next) => {
-  client.search({
+  client.get({
     index: 'ntuee',
     type: 'user',
     id, // id: id,
   }).then((resp) => {
-    console.log('resp', resp);
+    next(null, resp);
   }, (err) => {
     console.trace(err.message);
     next(err);
   });
 };
+
+/**
+ *  success example:
+ *  [
+ *    {
+ *      _index: 'ntuee',
+ *      _type: 'user,
+ *      _score: 3.7725885,
+ *      _source: { school_id: 'B70203011', name: '何建勳' },
+ *    }
+ *  ]
+ */
 
 exports.getUserBySchool_Id = (schoolId, next) => {
   client.search({
@@ -98,13 +126,27 @@ exports.getUserBySchool_Id = (schoolId, next) => {
     },
   }).then((resp) => {
     console.log('hit', resp.hits.hits);
-    next(resp.hits.hits);
+    next(null, resp.hits.hits);
   }, (err) => {
     console.trace(err.message);
     next(err);
   });
 };
 
+/**
+ *  success example:
+ *  {
+ *    "_index": "ntuee",
+ *    "_type": "user",
+ *    "_id": "1",
+ *    "_version": 2,
+ *    "_shards": {
+ *      "total": 2,
+ *      "successful": 1,
+ *      "failed": 0
+ *    }
+ *  }
+*/
 exports.updateUserById = (id, doc, next) => {
   client.update({
     index: 'ntuee',
@@ -121,6 +163,7 @@ exports.updateUserById = (id, doc, next) => {
   });
 };
 
+// same as getUserBySchoolId
 exports.search = (strings, next) => {
   let myQuery = '';
   if (strings.length !== 0) {

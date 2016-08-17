@@ -1,4 +1,5 @@
 /* eslint-disable */
+// google sheet: https://docs.google.com/spreadsheets/d/1D58ISBmFYyfVzkbkuNQjQOQQZPBtKXQu2tVaLlH6AdI/edit#gid=0
 
 var fs = require('fs');
 var readline = require('readline');
