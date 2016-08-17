@@ -1,9 +1,14 @@
+'use strict'
+
 const Router = require('express').Router;
 const router = new Router();
 
 const bcrypt = require('bcrypt');
 
 const mysql = require('./mysql');
+
+const elasticsearch = require('./elasticsearch');
+const googlesheet = require('./googlesheet');
 
 const getBcrypt = (password, next) => {
   bcrypt.genSalt(10, (err, salt) => {

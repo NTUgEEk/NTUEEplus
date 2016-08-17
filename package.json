@@ -13,6 +13,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:NTUwanderer/NTUEEplus.git"
+  },
   "dependencies": {
     "babel-polyfill": "^6.7.4",
     "bcrypt": "^0.8.7",
@@ -21,6 +25,7 @@
     "connect-mongo": "^1.2.1",
     "connect-redis": "^3.1.0",
     "cookie-parser": "^1.4.3",
+    "elasticsearch": "^11.0.1",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "isomorphic-fetch": "^2.2.1",
@@ -50,6 +55,8 @@
     "eslint-plugin-jsx-a11y": "^1.2.0",
     "eslint-plugin-react": "^5.1.1",
     "extract-text-webpack-plugin": "^1.0.1",
+    "google-auth-library": "^0.9.8",
+    "googleapis": "^12.0.0",
     "http-proxy-middleware": "^0.16.0",
     "proxy-middleware": "^0.15.0",
     "socket.io": "^1.4.6",
