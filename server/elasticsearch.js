@@ -18,30 +18,33 @@ client.ping({
     console.log('All is well');
   }
 });
-
+const columnList = [
+  'school_id',    // 0
+  'name',
+  'facebook',
+  'linkedin',
+  'line_id',
+  'wechat_id',    // 5
+  '???',
+  'email',
+  'mobile',
+  'office_phone',
+  'city',         // 10
+  'company',
+  'prev_company',
+  'work_field',
+  'skype',
+  'last_update',  // 15
+  'others',
+];
 const parseData = (data) => {
   const people = [];
   for (let i = 0, length = data.length; i < length; ++i) {
     const theData = data[i];
-    const person = {
-      school_id: theData[0],
-      name: theData[1],
-      facebook: theData[2],
-      linkedin: theData[3],
-      line_id: theData[4],
-      wechat_id: theData[5],
-      // ???: theData[6],
-      email: theData[7],
-      mobile: theData[8],
-      office_phone: theData[9],
-      city: theData[10],
-      company: theData[11],
-      prev_company: theData[12],
-      work_field: theData[13],
-      skype: theData[14],
-      // last_update: theData[15],
-      others: theData[16],
-    };
+    const person = {};
+    for (let j = 0, temp = theData.length, length2 = temp < 17 ? temp : 17; j < length2; ++j) {
+      person[columnList[j]] = theData[j]; // in case theData.length != 17
+    }
     people.push(person);
   }
   return people;
