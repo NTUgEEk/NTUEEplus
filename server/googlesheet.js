@@ -24,15 +24,15 @@ console.log("TOKEN_DIR", TOKEN_DIR);
  */
 
 // Load client secrets from a local file.
-function getData(params) {
-  fs.readFile('config/client_secret.json', function processClientSecrets(err, content) {
+function getData(params, next) {
+  fs.readFile('./server/config/client_secret.json', function processClientSecrets(err, content) {
     if (err) {
       console.log('Error loading client secret file: ' + err);
       return;
     }
     // Authorize a client with the loaded credentials, then call the
     // Google Sheets API.
-    authorize(JSON.parse(content), listMajors, params);
+    authorize(JSON.parse(content), listMajors, params, next);
   });
 }
 
@@ -43,7 +43,7 @@ function getData(params) {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback, params) {
+function authorize(credentials, callback, params, next) {
   var clientSecret = credentials.installed.client_secret;
   var clientId = credentials.installed.client_id;
   var redirectUrl = credentials.installed.redirect_uris[0];
@@ -56,7 +56,7 @@ function authorize(credentials, callback, params) {
       getNewToken(oauth2Client, callback);
     } else {
       oauth2Client.credentials = JSON.parse(token);
-      callback(oauth2Client, params);
+      callback(oauth2Client, params, next);
     }
   });
 }
@@ -114,7 +114,7 @@ function storeToken(token) {
  * Print the names and majors of students in a sample spreadsheet:
  * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
  */
-function listMajors(auth, params) {
+function listMajors(auth, params, next) {
   var sheets = google.sheets('v4');
   var range = params.sheet + '!' + params.start + ':' + params.end;
   sheets.spreadsheets.values.get({
@@ -132,6 +132,7 @@ function listMajors(auth, params) {
     } else {
       console.log('Name, Major:');
       console.log('row', rows);
+      next(rows);
       // for (var i = 0; i < rows.length; i++) {
       //   var row = rows[i];
       //   // Print columns A and E, which correspond to indices 0 and 4.
