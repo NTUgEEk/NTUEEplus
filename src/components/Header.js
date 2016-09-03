@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import classNames from 'classnames';
-import { fetchJSON, readCookie } from '../utils';
 
 import '../styles/Header.css';
 
@@ -11,6 +10,7 @@ class Header extends Component {
   };
 
   static propTypes = {
+    user: React.PropTypes.object.isRequired,
     children: React.PropTypes.node,
     location: React.PropTypes.object.isRequired,
   }
@@ -18,38 +18,12 @@ class Header extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      user: null,
-      fetchDone: false,
       searchType: 'name',
       searchKey: '',
     };
-    this.setUser = this.setUser.bind(this);
     this.search = this.search.bind(this);
     this.handleSearchTypeChange = this.handleSearchTypeChange.bind(this);
     this.handleSearchKeyChange = this.handleSearchKeyChange.bind(this);
-  }
-
-  componentWillMount() {
-    fetchJSON(
-      '/api/session',
-      { id: readCookie('session') },
-      json => this.setState({ user: json, fetchDone: true })
-    );
-  }
-
-  setUser(_user) {
-    this.setState({ user: _user });
-  }
-
-  redirectPage() {
-    const path = this.props.location.pathname;
-    if (path === '/login' || path === '/register') {
-      if (this.state.user !== null) {
-        this.context.router.push('/');
-      }
-    } else if (this.state.user === null) {
-      this.context.router.push('/login');
-    }
   }
 
   search(e) {
@@ -67,7 +41,7 @@ class Header extends Component {
 
   navbarItem() {
     const path = this.props.location.pathname;
-    if (this.state.user === null) {
+    if (this.props.user === null) {
       return (
         <ul className="nav navbar-nav navbar-right">
           <li className={classNames({ active: path === '/login' })}>
@@ -118,9 +92,9 @@ class Header extends Component {
               >
                 <img
                   alt=""
-                  src={`/public/users/${this.state.user.id}/profile.png`}
+                  src={`/public/users/${this.props.user.id}/profile.png`}
                 />
-                {this.state.user.name}
+                {this.props.user.name}
               </a>
               <ul className="dropdown-menu">
                 <li><Link to="/">個人簡歷</Link></li>
@@ -139,50 +113,38 @@ class Header extends Component {
     }
   }
 
-  children() {
-    const children = React.Children.map(this.props.children,
-           (child) => React.cloneElement(child, {
-             user: this.state.user,
-             setUser: this.setUser,
-           }));
-    return children;
-  }
-
   render() {
-    if (this.state.fetchDone) {
-      this.redirectPage();
-      return (
-        <div>
-          <nav className="navbar navbar-default navbar-fixed-top">
-            <div className="container-fluid">
-              <div className="navbar-header">
-                <button
-                  type="button"
-                  className="navbar-toggle"
-                  data-toggle="collapse"
-                  data-target="#navbar"
-                >
-                  <span className="icon-bar"></span>
-                  <span className="icon-bar"></span>
-                  <span className="icon-bar"></span>
-                </button>
-                <a className="navbar-brand" href="/">
-                  <img
-                    alt=""
-                    src="/public/resource/eesa-white.png"
-                    style={{ maxHeight: '55px' }}
-                  />
-                </a>
-              </div>
-              <div className="collapse navbar-collapse" id="navbar">
-                {this.navbarItem()}
-              </div>
+    return (
+      <div>
+        <nav className="navbar navbar-default navbar-fixed-top">
+          <div className="container-fluid">
+            <div className="navbar-header">
+              <button
+                type="button"
+                className="navbar-toggle"
+                data-toggle="collapse"
+                data-target="#navbar"
+              >
+                <span className="icon-bar"></span>
+                <span className="icon-bar"></span>
+                <span className="icon-bar"></span>
+              </button>
+              <a className="navbar-brand" href="/">
+                <img
+                  alt=""
+                  src="/public/resource/eesa-white.png"
+                  style={{ maxHeight: '55px' }}
+                />
+              </a>
             </div>
-          </nav>
-          <div className="mainPage">{this.children()}</div>
-        </div>
+            <div className="collapse navbar-collapse" id="navbar">
+              {this.navbarItem()}
+            </div>
+          </div>
+        </nav>
+        <div className="mainPage">{this.props.children}</div>
+      </div>
       );
-    } else return null;
   }
 }
 

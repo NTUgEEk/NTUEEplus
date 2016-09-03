@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 
 import Login from './components/Login';
-import Header from './components/Header';
+import App from './components/App';
 import Register from './components/Register';
 import UserInfo from './components/UserInfo';
 import Aboutme from './components/Aboutme';
@@ -16,7 +16,7 @@ import NotFoundPage from './components/NotFoundPage';
 
 
 export default (
-  <Route path="/" component={Header}>
+  <Route path="/" component={App}>
     <IndexRoute component={Aboutme} />
     <Route path="abroad" component={Abroad} />
     <Route path="carrier" component={Carrier} />
