@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import 'babel-polyfill';
+
+// All TODO: Lowest priority....
 
 class UserInfo extends Component {
   render() {

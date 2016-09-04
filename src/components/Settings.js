@@ -1,19 +1,17 @@
 import React, { Component } from 'react';
-import 'babel-polyfill';
+import { connect } from 'react-redux';
 
 class Settings extends Component {
+  // All TODO: Finish this page
   static contextTypes = {
     router: React.PropTypes.object.isRequired,
   };
 
   static propTypes = {
     user: React.PropTypes.object,
-    setUser: React.PropTypes.func,
-    fetchJSON: React.PropTypes.func,
   }
 
   render() {
-    if (this.props.user === null) return null;
     return (
       <div className="container">
         <div className="jumbotron">
@@ -24,4 +22,8 @@ class Settings extends Component {
   }
 }
 
-export default Settings;
+const mapStateToProps = (state) => ({
+  user: state.user,
+});
+
+export default connect(mapStateToProps)(Settings);

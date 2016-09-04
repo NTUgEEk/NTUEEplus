@@ -1,19 +1,16 @@
-import React, { Component } from 'react';
-import 'babel-polyfill';
+import React, { Component, PropTypes } from 'react';
 
 class Search extends Component {
+  // All TODO: Finish this page
   static contextTypes = {
     router: React.PropTypes.object.isRequired,
   };
 
   static propTypes = {
-    user: React.PropTypes.object,
-    setUser: React.PropTypes.func,
-    fetchJSON: React.PropTypes.func,
+    location: PropTypes.object.isRequired,
   }
 
   render() {
-    if (this.props.user === null) return null;
     return (
       <div className="container">
         <div className="jumbotron">
