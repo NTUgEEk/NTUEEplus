@@ -10,7 +10,7 @@ class Header extends Component {
   };
 
   static propTypes = {
-    user: React.PropTypes.object.isRequired,
+    user: React.PropTypes.object,
     children: React.PropTypes.node,
     location: React.PropTypes.object.isRequired,
   }
