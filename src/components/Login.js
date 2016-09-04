@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
+
 import { fetchJSON } from '../utils';
+import { setUser } from '../redux/actions';
 
 import '../styles/Login.css';
 
@@ -34,7 +37,7 @@ class Login extends Component {
         email: this.state.email,
         password: this.state.password,
       },
-      json => {
+      (json) => {
         if (json !== null) {
           this.props.setUser(json);
           this.context.router.push('/');
@@ -92,4 +95,8 @@ class Login extends Component {
   }
 }
 
-export default Login;
+const mapDispatchToProps = (dispatch) => ({
+  setUser: (user) => dispatch(setUser(user)),
+});
+
+export default connect(null, mapDispatchToProps)(Login);
