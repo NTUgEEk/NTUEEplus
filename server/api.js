@@ -8,10 +8,12 @@ const bcrypt = require('bcrypt');
 const mysql = require('./mysql');
 
 const elasticsearch = require('./elasticsearch');
-const googlesheet = require('./googlesheet');
+// const googlesheet = require('./googlesheet');
+
+const saltRounds = 10;
 
 const getBcrypt = (password, next) => {
-  bcrypt.genSalt(10, (err, salt) => {
+  bcrypt.genSalt(saltRounds, (err, salt) => {
     if (err) next(password);
     else {
       bcrypt.hash(password, salt, (err2, hash) => {
@@ -20,17 +22,13 @@ const getBcrypt = (password, next) => {
       });
     }
   });
-
-  const salt = bcrypt.genSaltSync(10);
-  const hash = bcrypt.hashSync(password, salt);
-  return hash;
 };
-
-let sessionId = 0;
 
 const dummy = {
   id: 0,  // This should be added for internal usage!
   email: 'dummy@dummy',
+  hashedPassword: 'dummy',
+  hashedSessionId: 0,
   name: 'Dummy',
   // password: String, // Do not send the password back to client!!
   bio: 'I\'m dummy',
@@ -45,110 +43,129 @@ const dummy = {
   searching_area: '',
 };
 
-const auth = (req, res, next) => {
-  const email = req.cookies.email;
-  console.log('auth email', email);
-  if (!email || email === 'undefined') {
-    res.sendStatus(401);
-  } else {
-    mysql.user_checkExist(email, (err, exist) => {
-      if (err || !exist) {
-        res.sendStatus(401);
-      } else { next(); }
-    });
+const users = [
+  dummy,
+];
+
+const getUserByEmail = (email) => {
+  for (let i = 0; i < users.length; ++i) {
+    if (email === users[i].email) return users[i];
+  }
+  return null;
+};
+
+const setUserInfoByEmail = (email, key, value) => {
+  for (let i = 0; i < users.length; ++i) {
+    if (email === users[i].email) {
+      users[i][key] = value;
+      break;
+    }
   }
 };
 
-router.post('/api/register', (req, res) => {
-  console.log('body', req.body);
-  if (!req.body.email || !req.body.password) {
-    res.json({ success: false, msg: 'Please pass email and password.' });
-  } else {
-    getBcrypt(req.body.password, (hash) => {
-      if (hash === req.body.password) {
-        console.log('bcrypt err...!');
-        res.send('Bcrypt Error.');
-      } else {
-        const newUser = {
-          EMAIL: req.body.email,
-          PASSWORD: hash,
-        };
+const extractUser = (user) => {
+  const clonedUser = {};
+  Object.keys(user).forEach((key) => {
+    if (user.hasOwnProperty(key)) {
+      clonedUser[key] = user[key];
+    }
+  });
+  clonedUser.hashedPassword = undefined;
+  clonedUser.hashedSessionId = undefined;
+  return clonedUser;
+};
 
-        console.log('create new user: ', newUser);
-        mysql.user_createUser(newUser, (err, result) => {
-          console.log('err', err);
-          console.log('result', result);
-          if (err) {
-            console.log(err);
-            res.send(err);
-          } else if (!result) {
-            res.send(result);
-          } else {
-            res.cookie('email', newUser.email);
-            res.send('Succeed.');
-          }
-        });
-      }
-    });
+const auth = (req, res, next) => {
+  const email = req.cookies.email;
+  const sessionId = req.cookies.sessionId;
+  console.log('auth email, sessionId', email, sessionId);
+  if (!email || email === 'undefined') {
+    res.sendStatus(401);
+  } else {
+    const user = getUserByEmail(email);
+    if (user === null) res.sendStatus(401);
+    else {
+      bcrypt.compare(sessionId, user.hashedSessionId, (err, result) => {
+        if ((!err && result) || sessionId === user.hashedSessionId) {
+          res.sendStatus(200);
+        } else {
+          next();
+        }
+      });
+    }
+  }
+};
+
+router.post('/register', (req, res) => {
+  if (!req.body.email || !req.body.password) {
+    res.json({ result: 'Fail', msg: 'Please pass email and password.' });
+  } else {
+    const user = getUserByEmail(req.body.email);
+    if (user !== null) {
+      res.json({ result: 'exist' });
+    } else {
+      getBcrypt(req.body.password, (hashed) => {
+        const newUser = {
+          email: req.body.email,
+          hashedPassword: hashed,
+        };
+        users.push(newUser);
+        res.json({ result: 'success' });
+      });
+    }
   }
 });
-
 
 router.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  // TODO: Should be replaced by proper session id generation
-
-  sessionId = Math.floor((Math.random() * 1000) + 1); // Fake session id
-
-  // TODO: Should check database and fetch the user data
-
-  if (email === 'dummy@dummy' && password === 'dummy') {
-    res.cookie('session', sessionId);
-    res.json(dummy);
-  } else res.json(null);
-
-  // if (!email || !password) {
-  //   res.send('login failed');
-  // } else {
-  //   mysql.user_checkPassword(email, password, (err, res2) => {
-  //     console.log('err', err);
-  //     console.log('res', res2);
-  //     if (!err && res) {
-  //       res.cookie('email', email);
-  //       res.send('Succeed.');
-  //     } else {
-  //       res.send(err);
-  //     }
-  //   });
-  // }
+  const user = getUserByEmail(email);
+  if (user !== null) {
+    bcrypt.compare(password, user.hashedPassword, (err, result) => {
+      if ((!err && result === true) || password === user.hashedPassword) {
+        const sessionId = Math.random().toString(36).substring(15);
+        res.cookie('email', email);
+        res.cookie('sessionId', sessionId);
+        res.json(extractUser(user));
+        console.log('hash generated.');
+        getBcrypt(sessionId, (hash) => {
+          setUserInfoByEmail(email, 'hashedSessionId', hash);
+        });
+      } else {
+        res.json(null);
+      }
+    });
+  } else {
+    res.json(null);
+  }
 });
 
 router.post('/session', (req, res) => {
+  const email = req.body.email;
   const id = req.body.id;
 
-  // TODO: Should be replaced by proper session check
-
-  if (id == sessionId) res.json(dummy);
-
-  // "==" is intended, don't change it as eslint suggest!!
-  // Cookies can only be stored as strings, to compare
-  // the strings with numbers, we have to use "=="
-
-  else res.json(null);
+  const user = getUserByEmail(email);
+  if (user === null) res.json(null);
+  else {
+    bcrypt.compare(id, user.hashedSessionId, (err, result) => {
+      if ((!err && result === true) || id === user.hashedSessionId) {
+        res.json(extractUser(user));
+      } else {
+        res.json(null);
+      }
+    });
+  }
 });
 
-router.get('/logout', (req, res) => {
-
-  // TODO: Proper session id removal
-
-  sessionId = 0;
-
-  // const email = req.cookies.email;
-  // console.log('logOut email', email);
-  // res.cookie('email', 'undefined');
-  // res.send('logOut success!');
+router.post('/logout', (req, res) => {
+  const email = req.cookies.email;
+  const user = getUserByEmail(email);
+  if (user === null) res.send('user not found');
+  else {
+    res.send('logout success!');
+    setUserInfoByEmail(email, 'hashedSessionId', undefined);
+  }
 });
 
 router.get('/content', auth, (req, res) => {
