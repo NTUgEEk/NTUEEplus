@@ -161,6 +161,10 @@ router.post('/session', (req, res) => {
 router.post('/logout', (req, res) => {
   const email = req.cookies.email;
   const user = getUserByEmail(email);
+
+  res.cookie('email', undefined);
+  res.cookie('sessionId', undefined);
+
   if (user === null) res.send('user not found');
   else {
     res.send('logout success!');
@@ -176,6 +180,16 @@ router.post('/formSignIn', (req, res) => {
   // console.log('req: ', req);
   console.log('password:', req.body.inputPassword);
   res.send('Succeed');
+});
+
+router.post('/search', (req, res) => {
+  elasticsearch.search(req.body.searchText, (err, hits) => {
+    if (err) {
+      res.json(null);
+    } else {
+      res.json(hits);
+    }
+  });
 });
 
 router.use((err, req, res) => {

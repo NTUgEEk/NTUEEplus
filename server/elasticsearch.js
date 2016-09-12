@@ -156,7 +156,7 @@ exports.updateUserById = (id, doc, next) => {
       doc, // doc, doc
     },
   }).then((resp) => {
-    next(resp);
+    next(null, resp);
   }, (err) => {
     console.trace(err.message);
     next(err);
@@ -186,7 +186,7 @@ exports.search = (strings, next) => {
     },
   }).then((resp) => {
     console.log('hit', resp.hits.hits);
-    next(resp.hits.hits);
+    next(null, resp.hits.hits);
   }, (err) => {
     console.trace(err.message);
     next(err);
