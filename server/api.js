@@ -182,8 +182,20 @@ router.post('/formSignIn', (req, res) => {
   res.send('Succeed');
 });
 
+const stringToArray = (string) => {
+  const array = string.split(' ');
+  for (let i = 0, length = array.length; i < length; ++i) {
+    if (array[i].length === 0) {
+      array.splice(i, 1);
+      --i;
+      --length;
+    }
+  }
+  return array;
+};
+
 router.post('/search', (req, res) => {
-  elasticsearch.search(req.body.searchText, (err, hits) => {
+  elasticsearch.search(stringToArray(req.body.searchText), (err, hits) => {
     if (err) {
       res.json(null);
     } else {
