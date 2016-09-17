@@ -1,5 +1,5 @@
 const elasticsearch = require('./server/elasticsearch');
-const googlesheet = require('./server/googlesheet');
+// const googlesheet = require('./server/googlesheet');
 
 if ((process.argv).length > 2) {
   switch (process.argv[2]) {
@@ -13,14 +13,21 @@ if ((process.argv).length > 2) {
       );
       break;
     } case '--setup': {
-      const params = {
-        sheet: 'B70',
-        start: 'A2',
-        end: 'Q',
-      };
-      googlesheet.getData(params, (rows) => {
-        elasticsearch.setupDatabase(rows);
-      });
+      // const params = {
+      //   sheet: 'B70',
+      //   start: 'A2',
+      //   end: 'Q',
+      // };
+      // googlesheet.getData(params, (rows) => {
+      //   elasticsearch.setupDatabase(rows);
+      // });
+      const rows = [
+        ['B70203011', '何建勳'],
+        ['B70204018', '徐偉智'],
+        ['B70501025', '呂堅平'],
+      ];
+      console.log('rows: ', rows);
+      elasticsearch.setupDatabase(rows);
       break;
     } case '--searchById': {
       const id = parseInt(process.argv[3], 10);
