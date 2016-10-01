@@ -8,6 +8,7 @@
     "start": "node devServer",
     "build": "NODE_ENV=production webpack --config webpack.config.prod.js",
     "start:prod": "node server/run.js",
+    "clean": "rm public/bundle.js public/bundle.js.map public/style.css public/style.css.map",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
