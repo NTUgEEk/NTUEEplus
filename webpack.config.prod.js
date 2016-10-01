@@ -28,7 +28,7 @@ const config = {
         include: path.join(__dirname, 'src'),
       }, {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader'),
+        loaders: ['style', 'css'],
       },
     ],
   },
