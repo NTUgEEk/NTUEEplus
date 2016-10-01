@@ -1,3 +1,5 @@
+'use strict'
+
 const express = require('express');
 const path = require('path');
 const nunjucks = require('nunjucks');
@@ -9,6 +11,33 @@ const cookieParser = require('cookie-parser');
 const app = express();
 
 const server = require('http').createServer(app);
+
+const bcrypt = require('bcrypt');
+const elasticsearch = require('./elasticsearch');
+
+const getUserByEmail = (email, next) => {
+  elasticsearch.getUserByAttr('email', email, (err, user) => {
+    if (user !== null) {
+      user._source.id = user._id; // eslint-disable-line
+      next(user._source); // eslint-disable-line
+    } else {
+      next(null);
+      console.log('can\'t find user with email: ', email);
+    }
+  });
+};
+
+const extractUser = (user) => {
+  const clonedUser = {};
+  Object.keys(user).forEach((key) => {
+    if (user.hasOwnProperty(key)) {
+      clonedUser[key] = user[key];
+    }
+  });
+  clonedUser.hashedPassword = undefined;
+  clonedUser.hashedSessionId = undefined;
+  return clonedUser;
+};
 
 app.use(cookieParser());
 
@@ -31,7 +60,29 @@ app.get('Logout', (req, res) => {
 });
 
 app.use('*', (req, res) => {
-  res.render('index');
+  console.log('cookies: ', req.cookies);
+  if (req.cookies !== undefined && req.cookies.email !== undefined && req.cookies.sessionId) {
+    const email = req.cookies.email;
+    const sessionId = req.cookies.sessionId;
+    console.log('email: ', email, 'sessionId: ', sessionId);
+
+    getUserByEmail(email, (user) => {
+      if (user === null) res.render('index', { server: 'null' });
+      else {
+        bcrypt.compare(sessionId, user.hashedSessionId, (err, result) => {
+          console.log('sessionId: ', sessionId, 'ans: ', user.hashedSessionId);
+          if ((!err && result) || sessionId === user.hashedSessionId) {
+            const extracted = extractUser(user);
+            res.render('index', { server: `${JSON.stringify(extracted)}` });
+          } else {
+            res.render('index', { server: 'null' });
+          }
+        });
+      }
+    });
+  } else {
+    res.render('index', { server: 'null' });
+  }
 });
 
 if (app.get('env') === 'development') {

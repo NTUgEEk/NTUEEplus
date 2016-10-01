@@ -1,4 +1,4 @@
-// api: https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html#api-search
+// api: https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html
 
 const ElasticSearch = require('elasticsearch');
 const client = new ElasticSearch.Client({
@@ -73,6 +73,17 @@ exports.setupDatabase = (data, next) => {
     next(err);
   });
 };
+
+exports.createUser = (data, next) => {
+  client.create({
+    index: 'ntuee',
+    type: 'user',
+    body: data,
+  }, (error, response) => {
+    next(error, response);
+  });
+};
+
 /**
  *  success example:
  *  {
@@ -103,30 +114,32 @@ exports.getUserById = (id, next) => {
 
 /**
  *  success example:
- *  [
  *    {
  *      _index: 'ntuee',
  *      _type: 'user,
+ *      _id: '1',
  *      _score: 3.7725885,
  *      _source: { school_id: 'B70203011', name: '何建勳' },
  *    }
- *  ]
  */
 
-exports.getUserBySchool_Id = (schoolId, next) => {
+exports.getUserByAttr = (key, value, next) => {
+  const pair = {};
+  pair[key] = value;
   client.search({
     index: 'ntuee',
     type: 'user',
     body: {
       query: {
-        match: {
-          school_id: schoolId,
-        },
+        match: pair,
       },
     },
   }).then((resp) => {
-    console.log('hit', resp.hits.hits);
-    next(null, resp.hits.hits);
+    if (resp.hits.hits.length !== 0) {
+      next(null, resp.hits.hits[0]);
+    } else {
+      next(null, null);
+    }
   }, (err) => {
     console.trace(err.message);
     next(err);
