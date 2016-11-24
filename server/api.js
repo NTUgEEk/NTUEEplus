@@ -4,7 +4,7 @@ const router = new Router();
 const bcrypt = require('bcrypt');
 
 const elasticsearch = require('./elasticsearch');
-// const googlesheet = require('./googlesheet');
+const studentdata = require('./studentdata');
 
 const saltRounds = 10;
 
@@ -20,20 +20,18 @@ const getBcrypt = (password, next) => {
   });
 };
 
-const createUser = (data) => {
-  elasticsearch.createUser(data, (err, resp) => {
-    console.log('createUser: ', err, resp);
-  });
-};
-
 const getUserByEmail = (email, next) => {
   elasticsearch.getUserByAttr('email', email, (err, user) => {
+    console.log(user);
+    if (err) {
+      next(err);
+      return;
+    }
     if (user !== null) {
       user._source.id = user._id; // eslint-disable-line
-      next(user._source); // eslint-disable-line
+      next(null, user._source); // eslint-disable-line
     } else {
-      next(null);
-      console.log('can\'t find user with email: ', email);
+      next(null, null);
     }
   });
 };
@@ -41,7 +39,7 @@ const getUserByEmail = (email, next) => {
 const setUserInfoByEmail = (email, key, value) => {
   const doc = {};
   doc[key] = value;
-  getUserByEmail(email, (user) => {
+  getUserByEmail(email, (err, user) => {
     if (user !== null) {
       elasticsearch.updateUserById(user.id, doc, (err2, resp) => {
         console.log('setUserInfoByEmail, udpate: ', err2, resp);
@@ -83,7 +81,7 @@ const auth = (req, res, next) => {
   if (!email || email === 'undefined') {
     res.sendStatus(401);
   } else {
-    getUserByEmail(email, (user) => {
+    getUserByEmail(email, (err, user) => {
       if (user === null) res.sendStatus(401);
       else {
         bcrypt.compare(sessionId, user.hashedSessionId, (err, result) => {
@@ -98,25 +96,78 @@ const auth = (req, res, next) => {
   }
 };
 
+router.post('/checkEmail', (req, res) => {
+  const email = req.body.email;
+
+  if(!email) {
+    res.json({ result: 'fail', msg: 'invalid request' });
+    return;
+  }
+
+  getUserByEmail(email, (err, user) => {
+    if(err) {
+      res.json({ result: 'fail' });
+      return;
+    }
+    if(user !== null) {
+      console.log(user);
+      res.json({ result: 'exist' });
+      return;
+    }
+    res.json({ result: 'ok' });
+  });
+});
+
 router.post('/register', (req, res) => {
   const email = req.body.email;
 
-  if (!email || !req.body.password) {
-    res.json({ result: 'Fail', msg: 'Please pass email and password.' });
+  if (!email || !req.body.password || !req.body.school_id || !req.body.name) {
+    res.json({ result: 'fail', msg: 'invalid request' });
   } else {
-    getUserByEmail(email, (user) => {
-      if (user !== null) {
-        res.json({ result: 'exist' });
-      } else {
-        getBcrypt(req.body.password, (hashed) => {
-          const newUser = {
-            email: email, // eslint-disable-line
-            hashedPassword: hashed,
-          };
-          createUser(newUser);
-          res.json({ result: 'success' });
-        });
+    getUserByEmail(email, (err, user) => {
+      if(err) {
+        res.json({ result: 'fail' });
+        return;
       }
+      if(user) {
+        res.json({ result: 'exist' });
+        return;
+      }
+      elasticsearch.getUserByAttr('school_id', req.body.school_id, (err, user) => {
+        if(err) {
+          res.json({ result: 'fail' });
+          return;
+        }
+        if(user) {
+          res.json({ result: 'exist' });
+          return;
+        }
+        studentdata.verify(req.body.school_id, req.body.name, (err, valid) => {
+          if(err) {
+            res.json({ result: 'fail' });
+            return;
+          }
+          if(!valid) {
+            res.json({ result: 'invalid' });
+            return;
+          }
+          getBcrypt(req.body.password, (hashed) => {
+            const newUser = {
+              name: req.body.name,
+              email: email, // eslint-disable-line
+              hashedPassword: hashed,
+              school_id: req.body.school_id
+            };
+            elasticsearch.createUser(newUser, (err) => {
+              if(err) {
+                res.json({ result: 'fail' });
+                return;
+              }
+              res.json({ result: 'success' });
+            });
+          });
+        });
+      });
     });
   }
 });
@@ -125,7 +176,7 @@ router.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  getUserByEmail(email, (user) => {
+  getUserByEmail(email, (err, user) => {
     if (user !== null) {
       console.log('user: ', user);
       bcrypt.compare(password, user.hashedPassword, (err, result) => {
@@ -154,7 +205,7 @@ router.post('/session', (req, res) => {
   const email = req.body.email;
   const id = req.body.id;
 
-  getUserByEmail(email, (user) => {
+  getUserByEmail(email, (err, user) => {
     if (user === null) res.json(null);
     else {
       bcrypt.compare(id, user.hashedSessionId, (err, result) => {
@@ -176,7 +227,7 @@ router.post('/logout', (req, res) => {
   res.clearCookie('email');
   res.clearCookie('sessionId');
 
-  getUserByEmail(email, (user) => {
+  getUserByEmail(email, (err, user) => {
     if (user === null) res.send('user not found');
     else {
       res.send('logout success!');

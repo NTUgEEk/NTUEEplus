@@ -10,7 +10,7 @@ client.ping({
   requestTimeout: 30000,
 
   // undocumented params are appended to the query string
-  hello: 'elasticsearch',
+  //hello: 'elasticsearch',
 }, (error) => {
   if (error) {
     console.error('elasticsearch cluster is down!');
@@ -75,7 +75,7 @@ exports.setupDatabase = (data, next) => {
 };
 
 exports.createUser = (data, next) => {
-  client.create({
+  client.index({
     index: 'ntuee',
     type: 'user',
     body: data,
@@ -131,7 +131,11 @@ exports.getUserByAttr = (key, value, next) => {
     type: 'user',
     body: {
       query: {
-        match: pair,
+        constant_score: {
+          filter: {
+            term: pair
+          }
+        }
       },
     },
   }).then((resp) => {

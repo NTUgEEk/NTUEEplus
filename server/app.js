@@ -55,10 +55,6 @@ app.use('/public', express.static(path.join(__dirname, '..', 'public')));
 
 app.use('/api', api);
 
-app.get('Logout', (req, res) => {
-  res.render('Logout');
-});
-
 app.use('*', (req, res) => {
   console.log('cookies: ', req.cookies);
   if (req.cookies !== undefined && req.cookies.email !== undefined && req.cookies.sessionId) {

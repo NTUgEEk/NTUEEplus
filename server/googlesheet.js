@@ -120,20 +120,22 @@ function listMajors(auth, params, next) {
   var range = params.sheet + '!' + params.start + ':' + params.end;
   sheets.spreadsheets.values.get({
     auth: auth,
-    spreadsheetId: '1D58ISBmFYyfVzkbkuNQjQOQQZPBtKXQu2tVaLlH6AdI',
+    spreadsheetId: '17G-6rzmrM5jao09h1Z84sh8NNQam0BYV7lRPaGxyUpA',
     range: range, // 'sheet response 1!A2:E'
   }, function(err, response) {
     if (err) {
       console.log('The API returned an error: ' + err);
+      next(err, []);
       return;
     }
     var rows = response.values;
     if (rows.length == 0) {
       console.log('No data found.');
+      next(null, rows);
     } else {
-      console.log('Name, Major:');
-      console.log('row', rows);
-      next(rows);
+      //console.log('Name, Major:');
+      //console.log('row', rows);
+      next(null, rows);
       // for (var i = 0; i < rows.length; i++) {
       //   var row = rows[i];
       //   // Print columns A and E, which correspond to indices 0 and 4.
