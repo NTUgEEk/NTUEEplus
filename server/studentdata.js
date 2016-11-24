@@ -2,6 +2,7 @@ var fs = require('fs');
 var readline = require('readline');
 
 module.exports.verify = function(id, name, next) {
+    id = id.toUpperCase();
     var rd = readline.createInterface({
         input: fs.createReadStream('./studentdata.csv'),
         output: process.stdout,
