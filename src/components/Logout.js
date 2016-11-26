@@ -9,7 +9,7 @@ class Logout extends Component {
     setUser: React.PropTypes.func,
   }
   componentWillMount() {
-    console.log(readCookie('session'));
+    //console.log(readCookie('session'));
     // Backend TODO: Implement API for removing session id from server
     // Remeber to change it to POST :)
     fetchJSON(
@@ -19,7 +19,7 @@ class Logout extends Component {
       },
       (json) => {
         this.props.setUser(null);
-        window.location = '/';
+        location.href = '/';
       }
     );
   }

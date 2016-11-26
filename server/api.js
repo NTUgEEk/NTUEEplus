@@ -230,7 +230,7 @@ router.post('/logout', (req, res) => {
   getUserByEmail(email, (err, user) => {
     if (user === null) res.send('user not found');
     else {
-      res.send('logout success!');
+      res.json({ status: 'success' });
       setUserInfoByEmail(email, 'hashedSessionId', undefined);
     }
   });
