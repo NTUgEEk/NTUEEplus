@@ -5,6 +5,7 @@ import Login from './components/Login';
 import App from './components/App';
 import Register from './components/Register';
 import UserInfo from './components/UserInfo';
+import ProfileEdit from './components/ProfileEdit';
 import Aboutme from './components/Aboutme';
 import Abroad from './components/Abroad';
 import Carrier from './components/Carrier';
@@ -41,6 +42,7 @@ const routes = (store) => {
       <Route onEnter={requireAuth}>
         <IndexRoute component={Aboutme} />
         <Route component={Aboutme} />
+        <Route path="edit" component={ProfileEdit} />
         <Route path="abroad" component={Abroad} />
         <Route path="carrier" component={Carrier} />
         <Route path="search" component={Search} />

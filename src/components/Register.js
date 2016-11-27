@@ -87,7 +87,7 @@ class Signup extends Component {
             this.setState({ identityInvalid: true });
             break;
           case 'success':
-            this.context.router.push('/login');
+            location.href = '/support';
             break;
           default:
             this.setState({ error: true });

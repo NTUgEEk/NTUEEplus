@@ -86,9 +86,10 @@ const auth = (req, res, next) => {
       else {
         bcrypt.compare(sessionId, user.hashedSessionId, (err, result) => {
           if ((!err && result) || sessionId === user.hashedSessionId) {
-            res.sendStatus(200);
-          } else {
+            req.user = user;
             next();
+          } else {
+            res.sendStatus(401);
           }
         });
       }
@@ -152,18 +153,27 @@ router.post('/register', (req, res) => {
             return;
           }
           getBcrypt(req.body.password, (hashed) => {
-            const newUser = {
-              name: req.body.name,
-              email: email, // eslint-disable-line
-              hashedPassword: hashed,
-              school_id: req.body.school_id
-            };
-            elasticsearch.createUser(newUser, (err) => {
-              if(err) {
-                res.json({ result: 'fail' });
-                return;
-              }
-              res.json({ result: 'success' });
+            const sessionId = Math.random().toString(36).substring(15);
+            res.cookie('email', email, { expires: new Date(Date.now() + 900000), httpOnly: true });
+            res.cookie('sessionId', sessionId, { expires: new Date(Date.now() + 900000), httpOnly: true });
+            res.header('Access-Control-Allow-Credentials', 'true')
+
+            getBcrypt(sessionId, (hashedSessionId) => {
+              const newUser = {
+                name: req.body.name,
+                email: email, // eslint-disable-line
+                hashedPassword: hashed,
+                school_id: req.body.school_id,
+                hashedSessionId: hashedSessionId
+              };
+
+              elasticsearch.createUser(newUser, (err) => {
+                if(err) {
+                  res.json({ result: 'fail' });
+                  return;
+                }
+                res.json({ result: 'success' });
+              });
             });
           });
         });
@@ -185,6 +195,7 @@ router.post('/login', (req, res) => {
           const sessionId = Math.random().toString(36).substring(15);
           res.cookie('email', email, { expires: new Date(Date.now() + 900000), httpOnly: true });
           res.cookie('sessionId', sessionId, { expires: new Date(Date.now() + 900000), httpOnly: true });
+          res.header('Access-Control-Allow-Credentials', 'true')
           res.json(extractUser(user));
           console.log('hash generated.');
           getBcrypt(sessionId, (hash) => {
@@ -198,6 +209,30 @@ router.post('/login', (req, res) => {
     } else {
       res.json(null);
     }
+  });
+});
+
+router.post('/edit', auth, (req, res) => {
+  const id = req.user.id;
+  const major = req.body.major;
+  const bio = req.body.bio;
+  const residence = req.body.residence;
+  const telephone = req.body.telephone;
+  const mobile = req.body.mobile;
+  const webpage = req.body.webpage;
+  const facebook = req.body.facebook;
+  const linkedin = req.body.linkedin;
+
+  const doc = { major, bio, residence, telephone, mobile, webpage, facebook, linkedin };
+
+  elasticsearch.updateUserById(id, doc, (err) => {
+    if(err) {
+      res.json({ status: 'fail' });
+      return;
+    }
+    let newUser = req.user;
+    for(const key in doc) newUser[key] = doc[key];
+    res.json({ status: 'success', user: extractUser(newUser) });
   });
 });
 
@@ -217,6 +252,10 @@ router.post('/session', (req, res) => {
       });
     }
   });
+});
+
+router.post('/me', auth, (req, res) => {
+  res.json(extractUser(req.user));
 });
 
 router.post('/logout', (req, res) => {
@@ -246,7 +285,7 @@ router.post('/formSignIn', (req, res) => {
   res.send('Succeed');
 });
 
-router.post('/search', (req, res) => {
+router.post('/search', auth, (req, res) => {
   console.log('in search, cookies: ', req.cookies);
   elasticsearch.search(stringToArray(req.body.searchText), (err, hits) => {
     if (err) {
