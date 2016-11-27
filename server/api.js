@@ -286,13 +286,37 @@ router.post('/formSignIn', (req, res) => {
 });
 
 router.post('/search', auth, (req, res) => {
-  console.log('in search, cookies: ', req.cookies);
   elasticsearch.search(stringToArray(req.body.searchText), (err, hits) => {
     if (err) {
       res.json(null);
     } else {
-      res.json(hits);
+      let list = [];
+      for(const user of hits) {
+        let newUser = extractUser(user._source);
+        newUser.id = user._id;
+        list.push(newUser);
+      }
+      res.json(list);
     }
+  });
+});
+
+router.post('/profile', auth, (req, res) => {
+  if(!req.body.id) {
+    res.json({ status: 'fail' });
+    return;
+  }
+  elasticsearch.getUserById(req.body.id, (err, user) => {
+    if(err) {
+      res.json({ status: 'fail' });
+      return;
+    }
+    if(user === null) {
+      res.json({ status: 'fail' });
+      return;
+    }
+    user._source.id = user._id;
+    res.json({ status: 'success', user: extractUser(user._source) });
   });
 });
 

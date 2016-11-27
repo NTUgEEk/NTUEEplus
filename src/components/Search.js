@@ -1,5 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 
+import ProfileCard from './ProfileCard';
+import { fetchJSON } from '../utils';
+
 class Search extends Component {
   // All TODO: Finish this page
   static contextTypes = {
@@ -8,14 +11,58 @@ class Search extends Component {
 
   static propTypes = {
     location: PropTypes.object.isRequired,
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      query: '',
+      result: []
+    };
+  }
+
+  performSearch() {
+    fetchJSON(
+      '/api/search',
+      {
+        searchText: this.state.query,
+      },
+      (json) => {
+        console.log('Search result: ', json);
+        this.setState({ result: json });
+      }
+    );
+  }
+
+  componentWillMount() {
+    this.setState({ query: this.props.location.query.key });
+  }
+
+  componentDidMount() {
+    this.performSearch();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ query: nextProps.location.query.key });
+    this.performSearch();
+  }
+
+  renderResult() {
+    let list = [];
+    for(const i in this.state.result) {
+      list.push(<ProfileCard key={i} user={this.state.result[i]} />);
+    }
+    return list;
   }
 
   render() {
     return (
       <div className="container">
         <div className="jumbotron">
-          <h2 className="text-center">{`Type: ${this.props.location.query.type}`}</h2>
-          <h2 className="text-center">{`Keyword: ${this.props.location.query.key}`}</h2>
+          <h2 className="text-center">{`搜尋： ${this.state.query}`}</h2>
+          <p>共 {this.state.result.length} 筆結果</p>
+          {this.renderResult()}
         </div>
       </div>
     );

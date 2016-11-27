@@ -9,17 +9,13 @@ import '../styles/Aboutme.css';
 
 class ProfileEdit extends Component {
 
-  static mixins = [
-    LinkedStateMixin
-  ];
-
   static contextTypes = {
     router: React.PropTypes.object.isRequired,
   };
 
   static propTypes = {
     setUser: React.PropTypes.func,
-  }
+  };
 
   constructor(props) {
     console.log(props);

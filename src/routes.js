@@ -4,7 +4,7 @@ import { Route, IndexRoute } from 'react-router';
 import Login from './components/Login';
 import App from './components/App';
 import Register from './components/Register';
-import UserInfo from './components/UserInfo';
+import Profile from './components/Profile';
 import ProfileEdit from './components/ProfileEdit';
 import Aboutme from './components/Aboutme';
 import Abroad from './components/Abroad';
@@ -46,9 +46,7 @@ const routes = (store) => {
         <Route path="abroad" component={Abroad} />
         <Route path="carrier" component={Carrier} />
         <Route path="search" component={Search} />
-        <Route path="user">
-          <Route path=":userid" component={UserInfo} />
-        </Route>
+        <Route path="profile" component={Profile} />
         <Route path="settings" component={Settings} />
         <Route path="support" component={Support} />
         <Route path="logout" component={Logout} />

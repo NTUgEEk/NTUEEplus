@@ -30,15 +30,6 @@ class Header extends Component {
 
   search(e) {
     e.preventDefault();
-    fetchJSON(
-      '/api/search',
-      {
-        searchText: this.state.searchKey,
-      },
-      (json) => {
-        console.log('Search result: ', json);
-      }
-    );
     this.context.router.push(`/search?type=${this.state.searchType}&key=${this.state.searchKey}`);
   }
 

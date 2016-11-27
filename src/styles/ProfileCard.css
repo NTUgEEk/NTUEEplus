@@ -1,0 +1,7 @@
+.profile-card {
+    cursor: pointer;
+}
+
+.profile-card li {
+    font-size: 1.2em;
+}
