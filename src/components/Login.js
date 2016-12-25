@@ -86,7 +86,7 @@ class Login extends Component {
             密碼錯誤或是帳號不存在！
           </div>
           <div className="form-suffix">
-            <Link to="/register">還沒有帳號</Link> 或是 <Link to="/forget">忘記密碼？</Link>
+            <Link to="/register">還沒有帳號</Link> 或是 <Link to="/forget">忘記密碼？</Link>｜<Link to="/policy">隱私權政策</Link>
           </div>
           <button className="btn btn-lg btn-block btn-login" type="submit">登入</button>
         </form>

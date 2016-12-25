@@ -14,7 +14,7 @@ import Logout from './components/Logout';
 import Search from './components/Search';
 import Settings from './components/Settings';
 import NotFoundPage from './components/NotFoundPage';
-
+import Policy from './components/Policy';
 
 const routes = (store) => {
   const requireAuth = (nextState, replace) => {
@@ -54,6 +54,7 @@ const routes = (store) => {
       <Route onEnter={notAuth}>
         <Route path="login" component={Login} />
         <Route path="register" component={Register} />
+        <Route path="policy" component={Policy} />
       </Route>
       <Route path="*" component={NotFoundPage} />
     </Route>
