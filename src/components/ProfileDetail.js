@@ -23,7 +23,7 @@ class ProfileDetail extends Component {
   }
 
   renderWork() {
-    if(!(this.props.user.work) instanceof Array) return (<div></div>);
+    if(!(this.props.user.work instanceof Array)) return (<div></div>);
     return this.props.user.work.map((work, idx) => {
       return (
         <div key={'work-' + idx}>
