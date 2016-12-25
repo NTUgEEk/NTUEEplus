@@ -22,6 +22,18 @@ class ProfileDetail extends Component {
     );
   }
 
+  renderWork() {
+    return this.props.user.work.map((work, idx) => {
+      return (
+        <div key={'work-' + idx}>
+          <p>年份：{work.year} 公司：{work.place} 名稱：{work.name}</p>
+          <p>經歷：{work.experience}</p>
+          <hr />
+        </div>
+      );
+    });
+  }
+
   render() {
     return (
       // UI TODO: Add more content
@@ -37,7 +49,7 @@ class ProfileDetail extends Component {
             <ul className="nav nav-pills nav-justified" role="tablist">
               <li role="presentation"><a href="#contact" role="tab" data-toggle="tab">聯絡方式</a></li>
               <li role="presentation" className="active"><a href="#profile" role="tab" data-toggle="tab">基本資訊</a></li>
-              <li role="presentation"><a href="#experience" role="tab" data-toggle="tab">經歷（未開放）</a></li>
+              <li role="presentation"><a href="#experience" role="tab" data-toggle="tab">經歷</a></li>
             </ul>
             <div className="tab-content">
               <div role="tabpanel" className="tab-pane" id="contact">
@@ -98,7 +110,27 @@ class ProfileDetail extends Component {
                   </tbody>
                 </table>
               </div>
-              <div role="tabpanel" className="tab-pane" id="experience">本區尚未開放！</div>
+              <div role="tabpanel" className="tab-pane" id="experience">
+                <h4>在學經歷{this.renderEditButton()}</h4>
+                <table className="table">
+                  <tbody>
+                    <tr>
+                      <td>MS</td>
+                      <td>{this.props.user.ms}</td>
+                    </tr>
+                    <tr>
+                      <td>PhD</td>
+                      <td>{this.props.user.phd}</td>
+                    </tr>
+                    <tr>
+                      <td>研究領域</td>
+                      <td>{this.props.user.research}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <h4>工作經歷{this.renderEditButton()}</h4>
+                {this.renderWork()}
+              </div>
             </div>
           </div>
         </div>

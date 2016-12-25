@@ -15,7 +15,9 @@ class Profile extends Component {
     super(props);
 
     this.state = {
-      user: {}
+      user: {
+        work: []
+      }
     };
   }
 

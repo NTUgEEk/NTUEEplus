@@ -32,6 +32,10 @@ class ProfileEdit extends Component {
       webpage: props.user.webpage || '',
       facebook: props.user.facebook || '',
       linkedin: props.user.linkedin || '',
+      ms: props.user.ms || '',
+      phd: props.user.phd || '',
+      research: props.user.research || '',
+      work: props.user.work || [],
       error: false
     };
 
@@ -43,6 +47,14 @@ class ProfileEdit extends Component {
     this.handleWebpageChange = this.handleWebpageChange.bind(this);
     this.handleFacebookChange = this.handleFacebookChange.bind(this);
     this.handleLinkedinChange = this.handleLinkedinChange.bind(this);
+    this.handleMsChange = this.handleMsChange.bind(this);
+    this.handlePhdChange = this.handlePhdChange.bind(this);
+    this.handleResearchChange = this.handleResearchChange.bind(this);
+    this.handleWorkYearChange = this.handleWorkYearChange.bind(this);
+    this.handleWorkPlaceChange = this.handleWorkPlaceChange.bind(this);
+    this.handleWorkNameChange = this.handleWorkNameChange.bind(this);
+    this.handleWorkExperienceChange = this.handleWorkExperienceChange.bind(this);
+    this.handleWorkAdd = this.handleWorkAdd.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
 
@@ -78,6 +90,90 @@ class ProfileEdit extends Component {
     this.setState({ linkedin: e.target.value });
   }
 
+  handleMsChange(e) {
+    this.setState({ ms: e.target.value });
+  }
+
+  handlePhdChange(e) {
+    this.setState({ phd: e.target.value });
+  }
+
+  handleResearchChange(e) {
+    this.setState({ research: e.target.value });
+  }
+
+  handleWorkYearChange(idx, e) {
+    var work = this.state.work.slice();
+    work[idx].year = e.target.value;
+    this.setState({ work: work });
+  }
+
+  handleWorkPlaceChange(idx, e) {
+    var work = this.state.work.slice();
+    work[idx].place = e.target.value;
+    this.setState({ work: work });
+  }
+
+  handleWorkNameChange(idx, e) {
+    var work = this.state.work.slice();
+    work[idx].name = e.target.value;
+    this.setState({ work: work });
+  }
+
+  handleWorkExperienceChange(idx, e) {
+    var work = this.state.work.slice();
+    work[idx].experience = e.target.value;
+    this.setState({ work: work });
+  }
+
+  handleWorkAdd() {
+    var work = this.state.work.slice();
+    work.push({
+      year: '',
+      place: '',
+      name: '',
+      experience: ''
+    });
+    this.setState({ work: work });
+  }
+
+  handleWorkRemove(idx) {
+    var work = this.state.work.slice();
+    work.splice(idx, 1);
+    this.setState({ work: work });
+  }
+
+  renderWork() {
+    return this.state.work.map((work, idx) => {
+      return (
+        <div key={'work-' + idx}>
+          <div className="form-group row">
+            <label className="col-sm-2 control-label">工作 {idx+1} <a href="javascript:void(0)" onClick={this.handleWorkRemove.bind(this, idx)}>x</a></label>
+            <div className="col-sm-10">
+              <div className="row">
+                <div className="col-sm-3">
+                  <input type="text" onChange={this.handleWorkYearChange.bind(this, idx)} value={work.year} className="form-control" placeholder="年份" />
+                </div>
+                <div className="col-sm-3">
+                  <input type="text" onChange={this.handleWorkPlaceChange.bind(this, idx)} value={work.place} className="form-control" placeholder="公司" />
+                </div>
+                <div className="col-sm-6">
+                  <input type="text" onChange={this.handleWorkNameChange.bind(this, idx)} value={work.name} className="form-control" placeholder="職稱" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="form-group row">
+            <div className="col-sm-2">&nbsp;</div>
+            <div className="col-sm-10">
+              <textarea onChange={this.handleWorkExperienceChange.bind(this, idx)} value={work.experience} className="form-control" placeholder="經歷"></textarea>
+            </div>
+          </div>
+        </div>
+      );
+    });
+  }
+
   onSubmit(e) {
     e.preventDefault();
 
@@ -91,7 +187,11 @@ class ProfileEdit extends Component {
       mobile: this.state.mobile,
       webpage: this.state.webpage,
       facebook: this.state.facebook,
-      linkedin: this.state.linkedin
+      linkedin: this.state.linkedin,
+      ms: this.state.ms,
+      phd: this.state.phd,
+      research: this.state.research,
+      work: this.state.work
     };
 
     fetchJSON(
@@ -190,6 +290,55 @@ class ProfileEdit extends Component {
                 <input type="text" onChange={this.handleLinkedinChange} value={this.state.linkedin} className="form-control" id="inputLinkedin" placeholder="https://www.linkedin.com/" />
               </div>
             </div>
+            <h3>經歷</h3>
+            <h4>在學經歷（選填）</h4>
+            <div className="form-group row">
+              <label htmlFor="inputMs" className="col-sm-2 control-label">MS</label>
+              <div className="col-sm-10">
+                <input type="text" onChange={this.handleMsChange} value={this.state.ms} className="form-control" id="inputMs" placeholder="MS" />
+              </div>
+            </div>
+            <div className="form-group row">
+              <label htmlFor="inputPhd" className="col-sm-2 control-label">PhD</label>
+              <div className="col-sm-10">
+                <input type="text" onChange={this.handlePhdChange} value={this.state.phd} className="form-control" id="inputPhd" placeholder="PhD" />
+              </div>
+            </div>
+            <div className="form-group row">
+              <label htmlFor="inputResearch" className="col-sm-2 control-label">研究領域</label>
+              <div className="col-sm-10">
+                <select onChange={this.handleResearchChange} value={this.state.research} className="form-control" id="inputResearch">
+                  <option value="通訊">通訊</option>
+                  <option value="積體電路系統">積體電路系統</option>
+                  <option value="電子設計自動化">電子設計自動化</option>
+                  <option value="光電">光電</option>
+                  <option value="半導體">半導體</option>
+                  <option value="電波">電波</option>
+                  <option value="生醫工程">生醫工程</option>
+                  <option value="電力工程">電力工程</option>
+                  <option value="計算機科學">計算機科學</option>
+                  <option value="物理">物理</option>
+                  <option value="化學">化學</option>
+                  <option value="材料">材料</option>
+                  <option value="工業工程">工業工程</option>
+                  <option value="工商管理">工商管理</option>
+                  <option value="人文社會">人文社會</option>
+                  <option value="經濟財金">經濟財金</option>
+                  <option value="遊戲設計">遊戲設計</option>
+                  <option value="航太工程">航太工程</option>
+                  <option value="數位訊號處理">數位訊號處理</option>
+                  <option value="影像處理">影像處理</option>
+                  <option value="電腦視覺">電腦視覺</option>
+                  <option value="人機互動">人機互動</option>
+                  <option value="機器學習">機器學習</option>
+                  <option value="純數領域">純數領域</option>
+                  <option value="應數領域">應數領域</option>
+                  <option value="藝術">藝術</option>
+                </select>
+              </div>
+            </div>
+            <h4>工作經歷（選填）<a href="javascript:void(0)" onClick={this.handleWorkAdd}>+</a></h4>
+            {this.renderWork()}
             {this.renderError()}
             <button type="submit" className="btn btn-primary">確定送出</button>
           </form>

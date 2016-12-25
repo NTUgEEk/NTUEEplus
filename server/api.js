@@ -222,8 +222,12 @@ router.post('/edit', auth, (req, res) => {
   const webpage = req.body.webpage;
   const facebook = req.body.facebook;
   const linkedin = req.body.linkedin;
+  const ms = req.body.ms;
+  const phd = req.body.phd;
+  const research = req.body.research;
+  const work = req.body.work;
 
-  const doc = { major, bio, residence, telephone, mobile, webpage, facebook, linkedin };
+  const doc = { major, bio, residence, telephone, mobile, webpage, facebook, linkedin, ms, phd, research, work };
 
   elasticsearch.updateUserById(id, doc, (err) => {
     if(err) {

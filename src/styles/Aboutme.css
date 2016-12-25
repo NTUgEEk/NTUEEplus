@@ -12,6 +12,10 @@
   margin-top: 50px;
 }
 
+.jumbotron p {
+    font-size: 15px;
+}
+
 .profile-pic {
   margin-bottom: 20px;
   max-height: 200px;
