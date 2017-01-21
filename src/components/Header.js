@@ -58,19 +58,6 @@ class Header extends Component {
       return (
         <div>
           <form className="navbar-form navbar-left" onSubmit={this.search}>
-            <div className="form-group">
-              <select
-                className="form-control search-switch"
-                value={this.state.searchType}
-                onChange={this.handleSearchTypeChange}
-              >
-                <option value="name">姓名</option>
-                <option value="school_id">學號</option>
-                <option value="res">研究</option>
-                <option value="field">領域</option>
-                <option value="work">工作</option>
-              </select>
-            </div>
             <div className="form-group search-bar">
               <input
                 type="text"
