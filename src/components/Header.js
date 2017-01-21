@@ -87,10 +87,7 @@ class Header extends Component {
               </a>
               <ul className="dropdown-menu">
                 <li><Link to="/">個人簡歷</Link></li>
-                <li><Link to="/abroad">留學交流</Link></li>
-                <li><Link to="/carrier">人才媒合</Link></li>
                 <li role="separator" className="divider"></li>
-                {/* <li className="dropdown-header">Nav header</li> */}
                 <li><Link to="/support">客服專區</Link></li>
                 <li><Link to="/settings">帳號設定</Link></li>
                 <li><Link to="/logout">登出</Link></li>
