@@ -2,6 +2,8 @@ import React, { PropTypes, Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
 
+import OptionalLink from './OptionalLink';
+
 import '../styles/Aboutme.css';
 
 class ProfileDetail extends Component {
@@ -75,15 +77,15 @@ class ProfileDetail extends Component {
                     </tr>
                     <tr>
                       <td>個人網頁</td>
-                      <td>{this.props.user.webpage || '未填寫'}</td>
+                      <td><OptionalLink href={this.props.user.webpage || '未填寫'} /></td>
                     </tr>
                     <tr>
                       <td>Facebook</td>
-                      <td>{this.props.user.facebook || '未填寫'}</td>
+                      <td><OptionalLink href={this.props.user.facebook || '未填寫'} /></td>
                     </tr>
                     <tr>
                       <td>Linkedin</td>
-                      <td>{this.props.user.linkedin || '未填寫'}</td>
+                      <td><OptionalLink href={this.props.user.linkedin || '未填寫'} /></td>
                     </tr>
                   </tbody>
                 </table>
