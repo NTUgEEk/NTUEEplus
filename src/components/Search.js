@@ -22,11 +22,12 @@ class Search extends Component {
     };
   }
 
-  performSearch() {
+  performSearch(nextKey) {
+    let key = nextKey || this.state.query;
     fetchJSON(
       '/api/search',
       {
-        searchText: this.state.query,
+        searchText: key,
       },
       (json) => {
         console.log('Search result: ', json);
@@ -45,7 +46,7 @@ class Search extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({ query: nextProps.location.query.key });
-    this.performSearch();
+    this.performSearch(nextProps.location.query.key);
   }
 
   renderResult() {

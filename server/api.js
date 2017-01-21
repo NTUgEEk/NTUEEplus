@@ -300,7 +300,20 @@ router.post('/search', auth, (req, res) => {
         newUser.id = user._id;
         list.push(newUser);
       }
-      res.json(list);
+      studentdata.findIdOrName(req.body.searchText, (err, result) => {
+        for(const user of result) {
+          user.unregistered = true;
+          let found = false;
+          for(const hit of list) {
+            if(hit.school_id == user.school_id) {
+              found = true;
+              break;
+            }
+          }
+          if(!found) list.push(user);
+        }
+        res.json(list);
+      });
     }
   });
 });
