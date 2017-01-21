@@ -43,7 +43,7 @@ class ProfileDetail extends Component {
           <img
             className="img-responsive center-block img-circle profile-pic"
             alt=""
-            src={`/public/users/${this.props.user.id}/profile.png`}
+            src={`/public/resource/default_profile.jpg`}
           />
           <h2 className="text-center">{this.props.user.name}</h2>
           <div>

@@ -94,7 +94,7 @@ class Header extends Component {
               >
                 <img
                   alt=""
-                  src={`/public/users/${this.props.user.id}/profile.png`}
+                  src={`/public/resource/default_profile.jpg`}
                 />
                 {this.props.user.name}
               </a>
