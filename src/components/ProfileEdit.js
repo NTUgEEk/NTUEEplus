@@ -24,6 +24,7 @@ class ProfileEdit extends Component {
 
     this.state = {
       major: props.user.major || '',
+      majorLocked: false,
       bio: props.user.bio || '',
       residence: props.user.residence || '',
       telephone: props.user.telephone || '',
@@ -56,6 +57,16 @@ class ProfileEdit extends Component {
     this.handleWorkExperienceChange = this.handleWorkExperienceChange.bind(this);
     this.handleWorkAdd = this.handleWorkAdd.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    let department = this.props.user.school_id.substr(3, 3);
+    if(department == '901' || department == '503') {
+      this.setState({
+        major: '是',
+        majorLocked: true
+      });
+    }
   }
 
   handleMajorChange(e) {
@@ -238,7 +249,7 @@ class ProfileEdit extends Component {
             <div className="form-group row">
               <label htmlFor="inputMajor" className="col-sm-2 control-label">本科</label>
               <div className="col-sm-10">
-                <input type="text" onChange={this.handleMajorChange} value={this.state.major} className="form-control" id="inputMajor" placeholder="是、輔系、雙主修..." />
+                <input type="text" disabled={this.state.majorLocked} onChange={this.handleMajorChange} value={this.state.major} className="form-control" id="inputMajor" placeholder="是、輔系、雙主修..." />
               </div>
             </div>
             <div className="form-group row">
