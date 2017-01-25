@@ -25,6 +25,7 @@ class Signup extends Component {
       id: '',
       existed: false,
       passwordInvalid: false,
+      emailNtu: false,
       identityInvalid: false,
       error: false,
       step: 1
@@ -44,10 +45,14 @@ class Signup extends Component {
       existed: false,
       passwordInvalid: false,
       identityInvalid: false,
+      emailNtu: false,
       error: false
     });
+    let emailArr = this.state.email.split('@');
     if (this.state.password !== this.state.confirm) {
       this.setState({ passwordInvalid: true });
+    } else if(emailArr[1].toLowerCase() == 'ntu.edu.tw') {
+      this.setState({ emailNtu: true });
     } else {
       fetchJSON('/api/checkEmail',
       {
@@ -68,6 +73,7 @@ class Signup extends Component {
       existed: false,
       passwordInvalid: false,
       identityInvalid: false,
+      emailNtu: false,
       error: false
     });
     fetchJSON(
@@ -119,6 +125,10 @@ class Signup extends Component {
     if(this.state.passwordInvalid) {
       return (
         <p className="text-danger">兩次輸入的密碼不符合！</p>
+      );
+    } else if(this.state.emailNtu) {
+      return (
+        <p className="text-danger">為了確保畢業之後能夠順利聯繫，請勿使用 NTU Mail 註冊。</p>
       );
     } else if(this.state.identityInvalid) {
       return (
