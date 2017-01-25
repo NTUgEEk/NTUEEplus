@@ -156,6 +156,7 @@ class Signup extends Component {
             <h2 className="form-signin-heading">註冊</h2>
             <div className="form-group">
               <label htmlFor="inputEmail">電子信箱</label>
+              <p className="text-info">因為 NTU Mail 將在畢業後失效，請填寫您其他的常用信箱。</p>
               <input
                 type="email"
                 id="inputEmail"
