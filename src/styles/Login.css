@@ -2,12 +2,16 @@ body {
   background-color: #213167;
 }
 
-.form-signin {
-  max-width: 750px;
-  margin: 75px auto 0 auto;
+.row-container {
+  max-width: 1000px;
+  margin: 75px auto 50px auto;
   background-color: white;
   padding: 70px;
   border-radius: 10px;
+}
+.intro-text {
+  font-weight: bold;
+  font-size: 1.15em;
 }
 .form-signin-heading {
   text-align: center;

@@ -5,6 +5,7 @@ import { fetchJSON } from '../utils';
 import { setUser } from '../redux/actions';
 
 import '../styles/Register.css';
+import '../styles/Login.css';
 
 class Signup extends Component {
   static contextTypes = {
@@ -147,87 +148,102 @@ class Signup extends Component {
     }
   }
 
+  renderIntro() {
+    return (
+      <div className="col-lg-6">
+        <p className="intro-text">NTUEE+ 希望成為電機系專屬的人脈網。</p>
+        <p>這個網站是系友專屬的通訊錄。<br />經過學號姓名認證後，您可以透過條件搜尋，舉例來說：<br />「美國加州（居住地）」、「機器學習（專業領域）」、「Facebook（就職公司）」、「b03901023（學號）」<br />就像 LinkedIn 一樣，搜尋到最符合您條件的人選。</p>
+      </div>
+    );
+  }
+
   render() {
     // UI TODO: Implement UI changes for existing account, confirm incorrect, and register error
     if(this.state.step == 1) {
       return (
         <div className="container">
-          <form className="form-signin" role="form" onSubmit={this.registerFirst}>
-            <h2 className="form-signin-heading">註冊</h2>
-            <div className="form-group">
-              <label htmlFor="inputEmail">電子信箱</label>
-              <p className="text-info">因為 NTU Mail 將在畢業後失效，請填寫您其他的常用信箱。</p>
-              <input
-                type="email"
-                id="inputEmail"
-                className="form-control"
-                placeholder="Email"
-                value={this.state.email}
-                onChange={this.handleEmailChange}
-                required autoFocus
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="inputPassword">密碼</label>
-              <input
-                type="password"
-                name="inputPassword"
-                className="form-control"
-                placeholder="Password"
-                value={this.state.password}
-                onChange={this.handlePasswordChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="inputConfirm">確認密碼</label>
-              <input
-                type="password"
-                name="inputPassword"
-                className="form-control"
-                placeholder="Type password again"
-                value={this.state.confirm}
-                onChange={this.handleConfirmChange}
-                required
-              />
-            </div>
-            {this.renderError()}
-            <button className="btn btn-lg btn-block btn-reg" type="submit">立即註冊</button>
-          </form>
+          <div className="row-container row">
+            {this.renderIntro()}
+            <form className="col-lg-6" role="form" onSubmit={this.registerFirst}>
+              <h2 className="form-signin-heading">註冊</h2>
+              <div className="form-group">
+                <label htmlFor="inputEmail">電子信箱</label>
+                <p className="text-info">因為 NTU Mail 將在畢業後失效，請填寫您其他的常用信箱。</p>
+                <input
+                  type="email"
+                  id="inputEmail"
+                  className="form-control"
+                  placeholder="Email"
+                  value={this.state.email}
+                  onChange={this.handleEmailChange}
+                  required autoFocus
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="inputPassword">密碼</label>
+                <input
+                  type="password"
+                  name="inputPassword"
+                  className="form-control"
+                  placeholder="Password"
+                  value={this.state.password}
+                  onChange={this.handlePasswordChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="inputConfirm">確認密碼</label>
+                <input
+                  type="password"
+                  name="inputPassword"
+                  className="form-control"
+                  placeholder="Type password again"
+                  value={this.state.confirm}
+                  onChange={this.handleConfirmChange}
+                  required
+                />
+              </div>
+              {this.renderError()}
+              <button className="btn btn-lg btn-block btn-reg" type="submit">立即註冊</button>
+            </form>
+          </div>
         </div>
       );
     } else {
       return (
         <div className="container">
-          <form className="form-signin" role="form" onSubmit={this.registerSecond}>
-            <h2 className="form-signin-heading">身份驗證</h2>
-            <div className="form-group">
-              <label htmlFor="inputEmail">學號</label>
-              <input
-                type="text"
-                id="inputId"
-                className="form-control"
-                placeholder="學號"
-                value={this.state.id}
-                onChange={this.handleIdChange}
-                required autoFocus
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="inputEmail">姓名</label>
-              <input
-                type="text"
-                id="inputName"
-                className="form-control"
-                placeholder="姓名"
-                value={this.state.name}
-                onChange={this.handleNameChange}
-                required autoFocus
-              />
-            </div>
-            {this.renderError()}
-            <button className="btn btn-lg btn-block btn-reg" type="submit">進行驗證</button>
-          </form>
+          <div className="row-container row">
+            {this.renderIntro()}
+            <form className="col-lg-6" role="form" onSubmit={this.registerSecond}>
+              <h2 className="form-signin-heading">身份驗證</h2>
+              <div className="form-group">
+                <label htmlFor="inputEmail">學號</label>
+                <input
+                  type="text"
+                  id="inputId"
+                  className="form-control"
+                  placeholder="學號"
+                  value={this.state.id}
+                  onChange={this.handleIdChange}
+                  required autoFocus
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="inputEmail">姓名</label>
+                <input
+                  type="text"
+                  id="inputName"
+                  className="form-control"
+                  placeholder="姓名"
+                  value={this.state.name}
+                  onChange={this.handleNameChange}
+                  required autoFocus
+                />
+              </div>
+              {this.renderError()}
+              <button className="btn btn-lg btn-block btn-reg" type="submit">進行驗證</button>
+            </form>
+          </div>
         </div>
       );
     }
